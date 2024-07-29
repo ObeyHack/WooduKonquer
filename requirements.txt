@@ -1,2 +1,4 @@
 gymnasium
 git+https://github.com/helpingstar/gym-woodoku.git
+ffmpeg
+imageio-ffmpeg

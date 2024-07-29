@@ -2,5 +2,6 @@
 /.idea/
 /.env/
 /.ipynb_checkpoints/
+/src/video_folder/
 .DS_Store
 *.pyc
