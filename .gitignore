@@ -5,3 +5,5 @@
 /src/video_folder/
 .DS_Store
 *.pyc
+.env
+.env
