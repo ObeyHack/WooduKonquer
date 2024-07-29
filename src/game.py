@@ -7,13 +7,46 @@ class GameState:
     def __init__(self, env: Env):
         self._env = env
         self._cur_observation = self._env.reset()[0]
+        self._woodoku_env = self._env.env.env
+        self._woodoku_env.__deepcopy__ = self.__copy
+        x = 1
+
+    def __copy(self, memo):
+        from copy import deepcopy, copy
+        cls = self._woodoku_env.__class__
+        result = cls.__new__(cls)
+        memo[id(self._woodoku_env)] = result
+        for k, v in self._woodoku_env.__dict__.items():
+            if k == "window":
+                setattr(result, k, copy(v))
+                continue
+
+            if k == "clock" or k == "__deepcopy__":
+                setattr(result, k, v)
+                continue
+
+            setattr(result, k, deepcopy(v, memo))
+        return result
+
+    def __deepcopy__(self, memo):
+        from copy import deepcopy
+        env2 = deepcopy(self._env)
+        return GameState(env2)
 
     @property
     def observation(self):
         return self._cur_observation
 
+    @property
+    def board(self):
+        return self._woodoku_env._board
+
+    @property
+    def score(self):
+        return self._woodoku_env._score
+
     def get_agent_legal_actions(self):
-        actions = self._env.env.env.legality
+        actions = self._woodoku_env.legality
         return [i for i in range(len(actions)) if actions[i] == 1]
 
     def apply_action(self, action):
@@ -21,11 +54,22 @@ class GameState:
         self._cur_observation = observation
         return reward, terminated, info
 
-
     def generate_successor(self, action):
-        env2 = copy.deepcopy(self._env.unwrapped)
+        new_state = copy.deepcopy(self)
+        # Turn off rendering
+        render_mode = new_state._woodoku_env.render_mode
+        new_state._woodoku_env.render_mode = None
+
+        # Apply action
         new_state.apply_action(action)
+
+        # Turn on rendering
+        new_state._woodoku_env.render_mode = render_mode
+        new_state._env.env.env = new_state._woodoku_env
+
+        # Return new state
         return new_state
+
 
 class Agent:
   """
