@@ -6,11 +6,11 @@ class Agent:
   An agent must define a getAction method, but may also define the
   following methods which will be called if they exist:
   """
-  def __init__(self, action_space, observation_space, index=0):
+  def __init__(self, action_space, index=0):
     self.index = index
     self.action_space = action_space
 
-  def getAction(self, state):
+  def getAction(self, state, env):
     """
     The Agent will receive a state and must return an action
     :param state: observation from the environment. It is a dictionary containing the following:

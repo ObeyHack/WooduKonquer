@@ -1,6 +1,7 @@
 import gym_woodoku
 import gymnasium as gym
 from agents.randomAgent import RandomAgent
+from agents.multi_agents import ReflexAgent
 import argparse
 from game import Game
 
@@ -8,6 +9,7 @@ SUMMARY_ITERS = 5
 
 agents = {
     "random": RandomAgent,
+    "reflex": ReflexAgent,
 }
 
 render_modes = {
@@ -15,6 +17,7 @@ render_modes = {
     "RGB": "rgb_array",
     "Text": "ansi",
     "SummaryDisplay": None,
+    "Testing": None,
 }
 
 def parse_args():
@@ -47,6 +50,7 @@ def main():
     scores = []
     for i in range(iters):
         scores.append(game.run())
+        print(f"Score: {scores[-1]}")
 
     if args.render == "SummaryDisplay":
         print(f"Average score over {SUMMARY_ITERS} iterations: {sum(scores) / SUMMARY_ITERS}")
