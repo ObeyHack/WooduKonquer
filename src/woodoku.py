@@ -1,13 +1,13 @@
 import gym_woodoku
 import gymnasium as gym
-from agents import randomAgent, humanAgent
+from agents.randomAgent import RandomAgent
 import argparse
+from game import Game
 
-
+SUMMARY_ITERS = 5
 
 agents = {
-    "random": randomAgent,
-    "human": humanAgent
+    "random": RandomAgent,
 }
 
 render_modes = {
@@ -33,15 +33,23 @@ def parse_args():
     parser.add_argument("-d", "--display", dest="render", type=str, choices=render_modes.keys(),
                         help="Render mode", default="GUI")
 
-    #
     args = parser.parse_args()
     return args
+
 
 def main():
     args = parse_args()
     env = gym.make('gym_woodoku/Woodoku-v0', game_mode='woodoku', render_mode=render_modes[args.render])
-    agents[args.agent].play(env)
-    return
+
+    game = Game(env, agents[args.agent](env.action_space))
+
+    iters = 1 if args.render != "SummaryDisplay" else SUMMARY_ITERS
+    scores = []
+    for i in range(iters):
+        scores.append(game.run())
+
+    if args.render == "SummaryDisplay":
+        print(f"Average score over {SUMMARY_ITERS} iterations: {sum(scores) / SUMMARY_ITERS}")
 
 
 if __name__ == "__main__":
