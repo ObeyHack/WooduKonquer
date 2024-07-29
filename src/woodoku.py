@@ -44,7 +44,7 @@ def main():
     args = parse_args()
     env = gym.make('gym_woodoku/Woodoku-v0', game_mode='woodoku', render_mode=render_modes[args.render])
 
-    game = Game(env, agents[args.agent](env.action_space))
+    game = Game(env, agents[args.agent]())
 
     iters = 1 if args.render != "SummaryDisplay" else SUMMARY_ITERS
     scores = []

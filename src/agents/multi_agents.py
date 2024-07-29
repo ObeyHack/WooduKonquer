@@ -1,4 +1,4 @@
-from src.agents.agent import Agent
+from src.game import Agent
 import numpy as np
 
 
@@ -12,7 +12,7 @@ class ReflexAgent(Agent):
     headers.
     """
 
-    def getAction(self, game_state, env):
+    def getAction(self, game_state):
         """
         You do not need to change this method, but you're welcome to.
 

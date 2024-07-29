@@ -4,3 +4,4 @@ gymnasium[other]
 ffmpeg
 imageio-ffmpeg
 keyboard
+seaborn
