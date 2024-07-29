@@ -9,7 +9,6 @@ class GameState:
         self._cur_observation = self._env.reset()[0]
         self._woodoku_env = self._env.env.env
         self._woodoku_env.__deepcopy__ = self.__copy
-        x = 1
 
     def __copy(self, memo):
         from copy import deepcopy, copy
