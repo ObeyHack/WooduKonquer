@@ -1,6 +1,6 @@
 import gym_woodoku
 import gymnasium as gym
-from agents import randomAgent
+from agents import randomAgent, humanAgent
 import argparse
 
 
@@ -26,7 +26,8 @@ def parse_args():
 def main():
     args = parse_args()
     agents = {
-        "random": randomAgent
+        "random": randomAgent,
+        "human": humanAgent
     }
 
     env = gym.make('gym_woodoku/Woodoku-v0', game_mode='woodoku', render_mode=args.render)
