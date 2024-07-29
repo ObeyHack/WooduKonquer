@@ -43,6 +43,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+
 def configure_logger(env):
     """
     Configure comet logger
@@ -55,6 +56,7 @@ def configure_logger(env):
         workspace=os.getenv("WORKSPACE_NAME"),
     )
     return CometLogger(env, experiment)
+
 
 def main():
     args = parse_args()
