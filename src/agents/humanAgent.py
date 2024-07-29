@@ -1,7 +1,7 @@
 import copy
-
+import gymnasium as gym
 import keyboard
-import gymnasium.utils.play
+import gym_woodoku
 
 def play(env):
     observation, info = env.reset()
@@ -65,6 +65,11 @@ def play(env):
     x = 1
 
     env.close()
+
+
+if __name__ == '__main__':
+    env = gym.make('gym_woodoku/Woodoku-v0', game_mode='woodoku', render_mode='human')
+    play(env=env)
 
 
 # def play(env):
