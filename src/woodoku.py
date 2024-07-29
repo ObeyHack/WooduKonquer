@@ -4,6 +4,10 @@ from agents.randomAgent import RandomAgent
 from agents.multi_agents import ReflexAgent
 import argparse
 from game import Game
+from comet_ml import Experiment
+from comet_ml.integration.gymnasium import CometLogger
+from dotenv import load_dotenv
+import os
 
 SUMMARY_ITERS = 5
 
@@ -39,10 +43,24 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+def configure_logger(env):
+    """
+    Configure comet logger
+    :return: comet logger
+    """
+    load_dotenv('./../.env')
+    experiment = Experiment(
+        api_key=os.getenv("API_TOKEN"),
+        project_name=os.getenv("PROJECT_NAME"),
+        workspace=os.getenv("WORKSPACE_NAME"),
+    )
+    return CometLogger(env, experiment)
 
 def main():
     args = parse_args()
+
     env = gym.make('gym_woodoku/Woodoku-v0', game_mode='woodoku', render_mode=render_modes[args.render])
+    # env = configure_logger(env)
 
     game = Game(env, agents[args.agent]())
 
