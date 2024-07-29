@@ -33,6 +33,10 @@ class GameState:
         env2 = deepcopy(self._env)
         return GameState(env2)
 
+
+    def is_terminated(self):
+        return self._woodoku_env._is_terminated
+
     @property
     def observation(self):
         return self._cur_observation
@@ -45,7 +49,7 @@ class GameState:
     def score(self):
         return self._woodoku_env._score
 
-    def get_agent_legal_actions(self):
+    def get_legal_actions(self):
         actions = self._woodoku_env.legality
         return [i for i in range(len(actions)) if actions[i] == 1]
 
@@ -79,7 +83,7 @@ class Agent:
   def __init__(self, index=0):
     self.index = index
 
-  def getAction(self, state: GameState):
+  def get_action(self, state: GameState):
     """
     The Agent will receive a state and must return an action
     :param state: GameState object holding observation from the environment and some useful methods.
@@ -121,7 +125,7 @@ class Game:
             # render the environment
             self.env.render()
             # take action
-            action = self.agent.getAction(state)
+            action = self.agent.get_action(state)
             reward, terminated, info = state.apply_action(action)
             score += reward
         return score

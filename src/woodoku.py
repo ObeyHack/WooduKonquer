@@ -1,7 +1,7 @@
 import gym_woodoku
 import gymnasium as gym
-from agents.randomAgent import RandomAgent
-from agents.multi_agents import ReflexAgent
+from agents.single_agents import RandomAgent, ReflexAgent
+from agents.multi_agents import MinmaxAgent, ExpectimaxAgent
 import argparse
 from game import Game
 from comet_ml import Experiment
@@ -14,6 +14,8 @@ SUMMARY_ITERS = 5
 agents = {
     "random": RandomAgent,
     "reflex": ReflexAgent,
+    "minimax": MinmaxAgent,
+    "expectimax": ExpectimaxAgent,
 }
 
 render_modes = {
