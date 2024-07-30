@@ -21,25 +21,16 @@ class QLearningAgent:
         self.epsilon = epsilon #exploration rate
         self.q_values = collections.defaultdict(float)
 
-    def to_hashable(self,state,index=None):
+    def to_hashable(self,state):
         """Converts a state consisting of numpy arrays to a hashable type (tuple)."""
-        if index == 0:
-            return tuple(state['board'].flatten()), tuple(state['block_1'].flatten())
-        elif index == 1:
-            return tuple(state['board'].flatten()), tuple(state['block_2'].flatten())
-        elif index == 2:
-            return tuple(state['board'].flatten()), tuple(state['block_3'].flatten())
-
+        return tuple([tuple(state['board'].flatten()), tuple(state['block_1'].flatten()), tuple(state['block_2'].flatten()), tuple(state['block_3'].flatten())])
 
     def get_q_value(self, state, action):
         # convert state to tuple
         (board, piece1, piece2, piece3) = state
-        if action <81:
-            return self.q_values[self.to_hashable(state,0), action]
-        elif action <162:
-            return self.q_values[self.to_hashable(state,1), action]
-        else:
-            return self.q_values[self.to_hashable(state,2), action]
+        state_helper = self.to_hashable(state)
+        return self.q_values[state_helper, action]
+
 
 
     def get_value(self, state,env=None):
@@ -102,8 +93,13 @@ class QLearningAgent:
         new_q_value = q_value + self.alpha * (reward + self.gamma * next_q_value - q_value)
         (board, piece1, piece2, piece3) = state
 
-        self.q_values[self.to_hashable(state,action[0]), 81*action[0] + 9*action[1] + action[2]] = new_q_value
+        self.q_values[self.to_hashable(state), 81*action[0] + 9*action[1] + action[2]] = new_q_value
+def reward_for_clearing_board(board, previous_board, done, truncated):
+    reward = 0
 
+    # Reward for clearing rows, columns, or 3x3 grids
+    cleared_cells = np.sum(previous_board) - np.sum(board)
+    return cleared_cells * 10  # higher reward for more cleared cells
 def calculate_reward(board, previous_board, done, truncated):
     reward = 0
 
@@ -128,7 +124,7 @@ def calculate_reward(board, previous_board, done, truncated):
         for col in range(1, 8):
             if board[row, col] == 0 and board[row-1, col] == 1 and board[row+1, col] == 1 and board[row, col-1] == 1 and board[row, col+1] == 1:
                 isolated_blocks += 1
-    reward -= isolated_blocks * 5  # penalty for isolated empty cells
+    reward -= isolated_blocks * 20  # penalty for isolated empty cells
 
 
 
@@ -181,7 +177,7 @@ if __name__ == "__main__":
     # make qlearning agent here
     agent = QLearningAgent()#Reward of end: 812
 
-    rewards = train_agent(agent, env, num_episodes=10000)
+    rewards = train_agent(agent, env, num_episodes=1000)
     #plot the rewards
     plt.plot(rewards)
     plt.show()
