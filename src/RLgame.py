@@ -4,6 +4,7 @@ from tqdm import tqdm
 from src import util
 from src.game import Agent, GameState, Game
 from gymnasium import Env
+import gymnasium as gym
 
 
 class RLgameState(GameState):
@@ -203,10 +204,16 @@ class RLGame(Game):
         Run the game
         :return: score of the game
         """
+        # Turn off rendering
+        render_mode = self.env.env.env.render_mode
+        self.env.env.env.render_mode = None
 
         # Train the agent
         print("Training the agent")
         RLAgent.train_agent(self.agent, self.env, num_episodes=1000)
+
+        # Turn on rendering
+        self.env.env.env.render_mode = render_mode
 
         state = RLgameState(self.env, self.env.reset()[0])
         terminated = False
