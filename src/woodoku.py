@@ -1,7 +1,7 @@
 import gym_woodoku
 import gymnasium as gym
 from agents.single_agents import RandomAgent, ReflexAgent
-from agents.multi_agents import MinmaxAgent, ExpectimaxAgent
+from agents.multi_agents import MinmaxAgent, AlphaBetaAgent, ExpectimaxAgent
 import argparse
 from game import Game
 from comet_ml import Experiment
@@ -15,6 +15,7 @@ agents = {
     "random": RandomAgent,
     "reflex": ReflexAgent,
     "minimax": MinmaxAgent,
+    "alpha_beta": AlphaBetaAgent,
     "expectimax": ExpectimaxAgent,
 }
 

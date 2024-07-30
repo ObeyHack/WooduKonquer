@@ -4,8 +4,6 @@ from src.game import Agent
 import numpy as np
 
 
-
-
 def score_evaluation_function(current_game_state):
     """
     This default evaluation function just returns the score of the state.
@@ -15,6 +13,7 @@ def score_evaluation_function(current_game_state):
     (not reflex agents).
     """
     return current_game_state.score
+
 
 class MultiAgentSearchAgent(Agent):
     """
@@ -78,6 +77,51 @@ class MinmaxAgent(MultiAgentSearchAgent):
             return min(self.minimax(state.generate_successor(action), depth + 1, 0)
                        for action in state.get_legal_actions())
 
+
+class AlphaBetaAgent(MultiAgentSearchAgent):
+    """
+    Your minimax agent with alpha-beta pruning (question 3)
+    """
+
+    def get_action(self, game_state):
+        """
+        Returns the minimax action using self.depth and self.evaluationFunction
+        """
+        """ YOUR CODE HERE """
+
+        def max_value(game_state, depth, alpha, beta):
+            if depth == 0 or game_state.is_terminated():
+                return self.evaluation_function(game_state)
+            v = float('-inf')
+            for action in game_state.get_legal_actions():
+                v = max(v, min_value(game_state.generate_successor(action), depth, alpha, beta))
+                if v >= beta:
+                    return v
+                alpha = max(alpha, v)
+            return v
+
+        def min_value(game_state, depth, alpha, beta):
+            if depth == 0 or game_state.is_terminated():
+                return self.evaluation_function(game_state)
+            v = float('inf')
+            for action in game_state.get_legal_actions():
+                v = min(v, max_value(game_state.generate_successor(action), depth - 1, alpha, beta))
+                if v <= alpha:
+                    return v
+                beta = min(beta, v)
+            return v
+
+        best_action = None
+        best_score = float('-inf')
+        alpha = float('-inf')
+        beta = float('inf')
+        for action in game_state.get_legal_actions():
+            score = min_value(game_state.generate_successor(action), self.depth, alpha, beta)
+            if score > best_score:
+                best_score = score
+                best_action = action
+            alpha = max(alpha, best_score)
+        return best_action
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     def get_action(self, game_state):
