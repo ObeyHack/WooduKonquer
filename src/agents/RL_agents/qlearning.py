@@ -19,7 +19,6 @@ class QLearningAgent(RLAgent):
         possible_actions = state.get_legal_actions()
         return max([self.get_q_value(state, action) for action in possible_actions])
 
-
     def get_policy(self, state: RLgameState):
         if state.is_terminated():
             return 0
@@ -38,8 +37,9 @@ class QLearningAgent(RLAgent):
 
     def update(self, state: RLgameState, action, next_state: RLgameState, reward: int):
         q_value = self.get_q_value(state, action)
-        next_q_value = self.get_value(next_state)
-        new_q_value = q_value + self.alpha * (reward + self.discount * next_q_value - q_value)
-        self.q_values[state, action] = new_q_value
+        next_value = self.get_value(next_state)
+        sample = reward + self.discount * next_value
+        self.q_values[(state, action)] = (1 - self.alpha) * q_value + self.alpha * sample
+        return self.q_values[(state, action)]
 
 

@@ -46,7 +46,7 @@ class RLgameState(GameState):
         new_state = RLgameState(self._env, observation)
         self.terminated = terminated
         smart_reward = self.calculate_reward(board_prev, observation["board"], terminated, False)
-        return new_state, smart_reward, terminated, info
+        return new_state, reward, terminated, info
 
     def __eq__(self, othr):
         return (isinstance(othr, type(self))
@@ -64,7 +64,6 @@ class RLgameState(GameState):
         # Reward for clearing rows, columns, or 3x3 grids
         cleared_cells = np.sum(previous_board) - np.sum(board)
         return cleared_cells * 10  # higher reward for more cleared cells
-
 
     @staticmethod
     def calculate_reward(board, previous_board, done, truncated):
@@ -155,7 +154,6 @@ class RLAgent(Agent):
         """
         util.raiseNotDefined()
 
-
     @staticmethod
     def train_agent(agent, env, num_episodes=1000, max_steps=1000, plot_rewards=False):
         def plot(rewards):
@@ -210,7 +208,7 @@ class RLGame(Game):
 
         # Train the agent
         print("Training the agent")
-        RLAgent.train_agent(self.agent, self.env, num_episodes=1000)
+        RLAgent.train_agent(self.agent, self.env, num_episodes=1000, plot_rewards=True)
 
         # Turn on rendering
         self.env.env.env.render_mode = render_mode
