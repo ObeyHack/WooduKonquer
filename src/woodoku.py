@@ -2,8 +2,10 @@ import gym_woodoku
 import gymnasium as gym
 from agents.single_agents import RandomAgent, ReflexAgent
 from agents.multi_agents import MinmaxAgent, AlphaBetaAgent, ExpectimaxAgent
+from agents.RL_agents.qlearning import QLearningAgent
 import argparse
 from game import Game
+from RLgame import RLGame
 from comet_ml import Experiment
 from comet_ml.integration.gymnasium import CometLogger
 from dotenv import load_dotenv
@@ -17,6 +19,7 @@ agents = {
     "minimax": MinmaxAgent,
     "alpha_beta": AlphaBetaAgent,
     "expectimax": ExpectimaxAgent,
+    "q_learning": QLearningAgent,
 }
 
 render_modes = {
@@ -67,7 +70,10 @@ def main():
     env = gym.make('gym_woodoku/Woodoku-v0', game_mode='woodoku', render_mode=render_modes[args.render])
     # env = configure_logger(env)
 
-    game = Game(env, agents[args.agent]())
+    if args.agent == "q_learning":
+        game = RLGame(env, agents[args.agent]())
+    else:
+        game = Game(env, agents[args.agent]())
 
     iters = 1 if args.render != "SummaryDisplay" else SUMMARY_ITERS
     scores = []

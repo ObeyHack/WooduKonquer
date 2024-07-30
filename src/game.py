@@ -69,7 +69,7 @@ class GameState:
         observation, reward, terminated, _, info = self._env.step(action)
         self._cur_observation = observation
         self.terminated = terminated
-        return reward, terminated, info
+        return self, reward, terminated, info
 
     def generate_successor(self, action):
         new_state = copy.deepcopy(self)
@@ -139,6 +139,6 @@ class Game:
             self.env.render()
             # take action
             action = self.agent.get_action(state)
-            reward, terminated, info = state.apply_action(action)
+            state, reward, terminated, info = state.apply_action(action)
             score += reward
         return score
