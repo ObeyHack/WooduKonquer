@@ -123,6 +123,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             alpha = max(alpha, best_score)
         return best_action
 
+
 class ExpectimaxAgent(MultiAgentSearchAgent):
     def get_action(self, game_state):
         """
