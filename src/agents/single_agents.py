@@ -55,15 +55,18 @@ class ReflexAgent(Agent):
         """
         # Useful information you can extract from a GameState (game_state.py)
         successor_game_state = current_game_state.generate_successor(action=action)
-        board = successor_game_state.board
-        score = successor_game_state.score
+        board = current_game_state.board
+        score = current_game_state.score
+        successor_board = successor_game_state.board
+        successor_score = successor_game_state.score
+        reward = successor_score - score
 
         "*** YOUR CODE HERE ***"
 
-        # rows close to completion
-        row_score = 0
-        for row in board:
-            # exponential score for rows with 1
-            row_score += np.e ** np.sum(row == 1)
+        # total number of empty tiles
+        empty_tiles = np.sum(board == 0)
+        successor_empty_tiles = np.sum(successor_board == 0)
 
-        return score + 2 * row_score
+        diff_empty_tiles = successor_empty_tiles - empty_tiles if successor_empty_tiles > empty_tiles else 0
+
+        return reward + 1 * (diff_empty_tiles)
