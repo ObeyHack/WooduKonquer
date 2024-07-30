@@ -137,7 +137,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         """
         """*** YOUR CODE HERE ***"""
         legal_moves = game_state.get_legal_actions()
-        best_move = max(legal_moves, key=lambda x: self.expectimax(game_state.generate_successor(x), 0, 1))
+        best_move = max(tqdm(legal_moves), key=lambda x: self.expectimax(game_state.generate_successor(x), 0, 1))
         return best_move
 
 
@@ -147,8 +147,8 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
 
         if agent_index == 0:  # Our agent
             return max(self.expectimax(state.generate_successor(action), depth + 1, 1)
-                       for action in tqdm(state.get_legal_actions()))
+                       for action in state.get_legal_actions())
         else:  # Opponent
             legal_actions = state.get_legal_actions()
             return sum(self.expectimax(state.generate_successor(action), depth + 1, 0) for action in
-                       tqdm(legal_actions)) / len(legal_actions)
+                       legal_actions) / len(legal_actions)
