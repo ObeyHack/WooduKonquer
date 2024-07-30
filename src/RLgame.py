@@ -13,6 +13,8 @@ class RLgameState(GameState):
         self._woodoku_env = self._env.env.env
         self._cur_observation = observation
         self.terminated = False
+        self._combo = 0
+        self._straight = 0
 
     def get_legal_actions(self):
         # state is a dict of board, piece1, piece2, piece3
@@ -31,7 +33,9 @@ class RLgameState(GameState):
                 continue
             for row in range(9):
                 for col in range(9):
-                    # Place block_1 at ((action-0) // 9, (action-0) % 9) , Place block_2 at ((action-81) // 9, (action-81) % 9), Place block_3 at ((action-162) // 9, (action-162) % 9)
+                    # Place block_1 at ((action-0) // 9, (action-0) % 9) ,
+                    # Place block_2 at ((action-81) // 9, (action-81) % 9),
+                    # Place block_3 at ((action-162) // 9, (action-162) % 9)
                     # calculate  Discrete(243) = 81*row + 9*col + piece_index
                     action_helper = 81 * piece_index + 9 * row + col
                     if self._woodoku_env._is_valid_position(action_helper):
@@ -41,11 +45,11 @@ class RLgameState(GameState):
         return legal_actions
 
     def apply_action(self, action):
-        board_prev = self.board.copy()
         observation, reward, terminated, _, info = self._env.step(action)
         new_state = RLgameState(self._env, observation)
         self.terminated = terminated
-        smart_reward = self.calculate_reward(board_prev, observation["board"], terminated, False)
+        self._combo = info["combo"]
+        self._straight = info["straight"]
         return new_state, reward, terminated, info
 
     def __eq__(self, othr):

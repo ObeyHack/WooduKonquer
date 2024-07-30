@@ -10,6 +10,8 @@ class GameState:
         self._woodoku_env = self._env.env.env
         self._woodoku_env.__deepcopy__ = self.__copy
         self.terminated = False
+        self._combo = 0
+        self._straight = 0
 
     def __copy(self, memo):
         from copy import deepcopy, copy
@@ -36,6 +38,14 @@ class GameState:
 
     def is_terminated(self):
         return self.terminated
+
+    @property
+    def combo(self):
+        return self._combo
+
+    @property
+    def straight(self):
+        return self._straight
 
     @property
     def observation(self):
@@ -69,6 +79,8 @@ class GameState:
         observation, reward, terminated, _, info = self._env.step(action)
         self._cur_observation = observation
         self.terminated = terminated
+        self._combo = info["combo"]
+        self._straight = info["straight"]
         return self, reward, terminated, info
 
     def generate_successor(self, action):

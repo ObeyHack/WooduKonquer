@@ -2,7 +2,7 @@ import gym_woodoku
 import gymnasium as gym
 from agents.single_agents import RandomAgent, ReflexAgent
 from agents.multi_agents import MinmaxAgent, AlphaBetaAgent, ExpectimaxAgent
-from agents.RL_agents.qlearning import QLearningAgent
+from agents.RL_agents.qlearning import QLearningAgent, ApproximateQAgent
 import argparse
 from game import Game
 from RLgame import RLGame
@@ -20,6 +20,7 @@ agents = {
     "alpha_beta": AlphaBetaAgent,
     "expectimax": ExpectimaxAgent,
     "q_learning": QLearningAgent,
+    "q_approx": ApproximateQAgent,
 }
 
 render_modes = {
@@ -29,6 +30,9 @@ render_modes = {
     "SummaryDisplay": None,
     "Testing": None,
 }
+
+RL_agents = ["q_learning", "q_approx"]
+
 
 def parse_args():
     """
@@ -70,7 +74,7 @@ def main():
     env = gym.make('gym_woodoku/Woodoku-v0', game_mode='woodoku', render_mode=render_modes[args.render])
     # env = configure_logger(env)
 
-    if args.agent == "q_learning":
+    if args.agent in RL_agents:
         game = RLGame(env, agents[args.agent]())
     else:
         game = Game(env, agents[args.agent]())
