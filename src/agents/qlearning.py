@@ -1,4 +1,9 @@
+from src.game import Agent
+from RL_agents.RLgame import RLgameState
+
+
 from itertools import groupby
+
 
 import gym_woodoku
 import gymnasium as gym
@@ -14,31 +19,25 @@ import collections
 sns.set()
 
 
-class QLearningAgent:
+class QLearningAgent(Agent):
     def __init__(self, alpha=0.1, gamma=0.9, epsilon=0.1):
+        super().__init__()
         self.alpha = alpha #learning rate
         self.gamma = gamma#discount factor
         self.epsilon = epsilon #exploration rate
         self.q_values = collections.defaultdict(float)
 
-    def to_hashable(self,state):
-        """Converts a state consisting of numpy arrays to a hashable type (tuple)."""
-        return tuple([tuple(state['board'].flatten()), tuple(state['block_1'].flatten()), tuple(state['block_2'].flatten()), tuple(state['block_3'].flatten())])
-
-    def get_q_value(self, state, action):
+    def get_q_value(self, state: RLgameState, action):
         # convert state to tuple
-        (board, piece1, piece2, piece3) = state
-        state_helper = self.to_hashable(state)
-        return self.q_values[state_helper, action]
+        return self.q_values[state, action]
 
-
-
-    def get_value(self, state,env=None):
-        possible_actions = self.get_legal_actions(state,env)
-        if len(possible_actions) == 0:
+    def get_value(self, state: RLgameState):
+        if state.is_terminated():
             return 0.0
 
-        return max([self.get_q_value(state, 81*action[0] + 9*action[1] + action[2]) for action in possible_actions])
+        possible_actions = state.get_legal_actions()
+        return max([self.get_q_value(state, action) for action in possible_actions])
+
 
     def get_legal_actions(self, state,env=None):
         #state is a dict of board, piece1, piece2, piece3
@@ -64,42 +63,35 @@ class QLearningAgent:
                         legal_actions.append((piece_index, row, col))
         return legal_actions
 
+    def get_policy(self, state: RLgameState):
+        if state.is_terminated():
+            return 0
 
-
-
-
-
-    def get_policy(self, state,env=None):
-        possible_actions = self.get_legal_actions(state,env=env)
-        if len(possible_actions) == 0:
-            return None
-        q_values = {action: self.get_q_value(state, 81*action[0] + 9*action[1] + action[2]) for action in possible_actions}
+        possible_actions = state.get_legal_actions()
+        q_values = {action: self.get_q_value(state, action) for action in possible_actions}
         return max(q_values, key=q_values.get)
 
-    def get_action(self, state,env=None):
-        action = None
+    def get_action(self, state: RLgameState):
         if random.random() < self.epsilon:
-            the_action = random.choice(self.get_legal_actions(state,env=env))
-            #remove the action from the list of possible actions
-            return the_action
-        action = self.get_policy(state,env=env)
-        #remove the action from the list of possible actions
+            action = random.choice(state.get_legal_actions())
+            return action
+
+        action = self.get_policy(state)
         return action
-        # its a tuple of 3 values, the first value is the index of the piece, the second value is the row, the third value is the column
 
-    def update(self, state, action, next_state, reward,env=None):
-        q_value = self.get_q_value(state, 81*action[0] + 9*action[1] + action[2])
-        next_q_value = self.get_value(next_state,env)
+    def update(self, state: RLgameState, action, next_state: RLgameState, reward: int):
+        q_value = self.get_q_value(state, action)
+        next_q_value = self.get_value(next_state)
         new_q_value = q_value + self.alpha * (reward + self.gamma * next_q_value - q_value)
-        (board, piece1, piece2, piece3) = state
+        self.q_values[state, action] = new_q_value
 
-        self.q_values[self.to_hashable(state), 81*action[0] + 9*action[1] + action[2]] = new_q_value
 def reward_for_clearing_board(board, previous_board, done, truncated):
     reward = 0
 
     # Reward for clearing rows, columns, or 3x3 grids
     cleared_cells = np.sum(previous_board) - np.sum(board)
     return cleared_cells * 10  # higher reward for more cleared cells
+
 def calculate_reward(board, previous_board, done, truncated):
     reward = 0
 
@@ -127,12 +119,35 @@ def calculate_reward(board, previous_board, done, truncated):
     reward -= isolated_blocks * 20  # penalty for isolated empty cells
 
 
-
     # Bonus for larger contiguous open spaces
     reward += np.max([len(list(g)) for k, g in groupby(np.nditer(board.flatten())) if k == 0])
 
     return reward
-def train_agent(agent, env, num_episodes=1000):
+
+
+def train_agent(agent, env, num_episodes=1000, max_steps=1000):
+    rewards = []
+    for episode in range(num_episodes):
+        state = RLgameState(env, env.reset()[0])
+        step = 0
+        run_reward = 0
+        while step < max_steps:
+            action = agent.get_action(state)
+            next_state, reward, terminated, info = state.apply_action(action)
+            if state.is_terminated():
+                break
+            run_reward += reward
+            agent.update(state, action, next_state, reward)
+            step += 1
+            state = next_state
+
+        print(f'Episode {episode}, Reward {run_reward}')
+        rewards.append(run_reward)
+
+    return rewards
+
+
+def _train_agent(agent, env, num_episodes=1000, max_steps=1000):
     rewards = []
     steps = 0
     for episode in range(num_episodes):
@@ -152,7 +167,7 @@ def train_agent(agent, env, num_episodes=1000):
                 break
             helper_action = 81*action[0] + 9*action[1] + action[2]
             next_state, reward, done, truncated, info = env.step(helper_action)
-            number_of_ones= np.sum(next_state['board'])-number_of_ones
+            number_of_ones = np.sum(next_state['board'])-number_of_ones
             total_reward += reward
             reward= calculate_reward(next_state['board'],state['board'],done,truncated)
             #|number of ones| is the reward abs(number_of_ones)
@@ -166,32 +181,32 @@ def train_agent(agent, env, num_episodes=1000):
     return rewards
 
 
-if __name__ == "__main__":
-    #env = gym.make('gym_woodoku/Woodoku-v0', game_mode='woodoku', render_mode='human')
-    # env = gym.wrappers.RecordVideo(env, video_folder='./video_folder')
 
-    #observation, info = env.reset()
-    #make env without render to run faster
-    env= gym.make('gym_woodoku/Woodoku-v0', game_mode='woodoku', render_mode=None)
+def main():
+    env = gym.make('gym_woodoku/Woodoku-v0', game_mode='woodoku', render_mode=None)
     observation, info = env.reset()
     # make qlearning agent here
-    agent = QLearningAgent()#Reward of end: 812
+    agent = QLearningAgent()  # Reward of end: 812
 
     rewards = train_agent(agent, env, num_episodes=1000)
-    #plot the rewards
+    # plot the rewards
     plt.plot(rewards)
     plt.show()
-    #let the agent play the game
+    # let the agent play the game
     env = gym.make('gym_woodoku/Woodoku-v0', game_mode='woodoku', render_mode='human')
-    state, info = env.reset()
+    state = RLgameState(env, env.reset()[0])
     done = False
     reward_sum = 0
     while not done:
-        action = agent.get_policy(state,env=env)
-        action = 81*action[0] + 9*action[1] + action[2]
-        state, reward, done, truncated, info = env.step(action)
+        action = agent.get_policy(state)
+        state, reward, done, info = state.apply_action(action)
         reward_sum += reward
         env.render()
 
     print(f'Reward of end: {reward_sum}')
+
+
+if __name__ == "__main__":
+    main()
+
 

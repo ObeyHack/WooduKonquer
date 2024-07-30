@@ -9,6 +9,7 @@ class GameState:
         self._cur_observation = self._env.reset()[0]
         self._woodoku_env = self._env.env.env
         self._woodoku_env.__deepcopy__ = self.__copy
+        self.terminated = False
 
     def __copy(self, memo):
         from copy import deepcopy, copy
@@ -34,7 +35,7 @@ class GameState:
 
 
     def is_terminated(self):
-        return self._woodoku_env._is_terminated
+        return self.terminated
 
     @property
     def observation(self):
@@ -43,6 +44,18 @@ class GameState:
     @property
     def board(self):
         return self._woodoku_env._board
+
+    @property
+    def block1(self):
+        return self._woodoku_env._block_1
+
+    @property
+    def block2(self):
+        return self._woodoku_env._block_2
+
+    @property
+    def block3(self):
+        return self._woodoku_env._block_3
 
     @property
     def score(self):
@@ -55,6 +68,7 @@ class GameState:
     def apply_action(self, action):
         observation, reward, terminated, _, info = self._env.step(action)
         self._cur_observation = observation
+        self.terminated = terminated
         return reward, terminated, info
 
     def generate_successor(self, action):
