@@ -75,8 +75,7 @@ class GameState:
         return self._score
 
     def get_legal_actions(self):
-        actions = self.legal_action
-        return [i for i in range(len(actions)) if actions[i] == 1]
+        return self.legal_action
 
     def apply_action(self, action):
         observation, reward, terminated, _, info = self._env.step(action)
@@ -84,7 +83,7 @@ class GameState:
         self.terminated = terminated
         self._combo = info["combo"]
         self._straight = info["straight"]
-        self.legal_action = info["action_mask"]
+        self.legal_action = [i for i in range(len(info["action_mask"])) if info["action_mask"][i] == 1]
         self._score = info["score"]
         return self, reward, terminated, info
 
