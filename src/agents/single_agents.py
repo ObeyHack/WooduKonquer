@@ -58,6 +58,16 @@ class ReflexAgent(Agent):
         successor_game_state = current_game_state.generate_successor(action=action)
         board = current_game_state.board
         score = current_game_state.score
+
+        if (action > 0 and action < 81):
+            moved_block = 1
+
+        elif (action > 80 and action < 162):
+            moved_block = 2
+
+        else:
+            moved_block = 3
+
         successor_board = successor_game_state.board
         successor_score = successor_game_state.score
         reward = successor_score - score
@@ -67,5 +77,7 @@ class ReflexAgent(Agent):
         num_legal_moves = len(current_game_state.get_legal_actions())
         num_legal_moves_successor = len(successor_game_state.get_legal_actions())
         num_legal_moves_diff = num_legal_moves_successor - num_legal_moves
+
+        # Num of block the moved block is adjacent to in the successor state
 
         return reward + 100 * num_legal_moves_diff
