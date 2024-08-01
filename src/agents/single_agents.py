@@ -37,7 +37,7 @@ class ReflexAgent(Agent):
         legal_moves = game_state.get_legal_actions()
 
         # Choose one of the best actions
-        scores = [self.evaluation_function(game_state, action) for action in tqdm(legal_moves)]
+        scores = [self.evaluation_function(game_state, action) for action in legal_moves]
         best_score = max(scores)
         best_indices = [index for index in range(len(scores)) if scores[index] == best_score]
         chosen_index = np.random.choice(best_indices)  # Pick randomly among the best
@@ -64,10 +64,8 @@ class ReflexAgent(Agent):
 
         "*** YOUR CODE HERE ***"
 
-        # total number of empty tiles
-        empty_tiles = np.sum(board == 0)
-        successor_empty_tiles = np.sum(successor_board == 0)
+        num_legal_moves = len(current_game_state.get_legal_actions())
+        num_legal_moves_successor = len(successor_game_state.get_legal_actions())
+        num_legal_moves_diff = num_legal_moves_successor - num_legal_moves
 
-        diff_empty_tiles = successor_empty_tiles - empty_tiles if successor_empty_tiles > empty_tiles else 0
-
-        return reward + 1 * (diff_empty_tiles)
+        return reward + 100 * num_legal_moves_diff

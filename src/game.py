@@ -10,8 +10,10 @@ class GameState:
         self._woodoku_env = self._env.env.env
         self._woodoku_env.__deepcopy__ = self.__copy
         self.terminated = False
+        self.legal_action = [1 for _ in range(243)]
         self._combo = 0
         self._straight = 0
+        self._score = 0
 
     def __copy(self, memo):
         from copy import deepcopy, copy
@@ -54,26 +56,26 @@ class GameState:
 
     @property
     def board(self):
-        return self._woodoku_env._board
+        return self._cur_observation["board"]
 
     @property
     def block1(self):
-        return self._woodoku_env._block_1
+        return self._cur_observation["block1"]
 
     @property
     def block2(self):
-        return self._woodoku_env._block_2
+        return self._cur_observation["block2"]
 
     @property
     def block3(self):
-        return self._woodoku_env._block_3
+        return self._cur_observation["block3"]
 
     @property
     def score(self):
-        return self._woodoku_env._score
+        return self._score
 
     def get_legal_actions(self):
-        actions = self._woodoku_env.legality
+        actions = self.legal_action
         return [i for i in range(len(actions)) if actions[i] == 1]
 
     def apply_action(self, action):
@@ -82,6 +84,8 @@ class GameState:
         self.terminated = terminated
         self._combo = info["combo"]
         self._straight = info["straight"]
+        self.legal_action = info["action_mask"]
+        self._score = info["score"]
         return self, reward, terminated, info
 
     def generate_successor(self, action):
