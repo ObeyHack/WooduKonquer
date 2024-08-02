@@ -15,7 +15,21 @@ def score_evaluation_function(current_game_state):
     This evaluation function is meant for use with adversarial search agents
     (not reflex agents).
     """
-    return current_game_state.score
+    block_1 = current_game_state.block1
+    block_2 = current_game_state.block2
+    block_3 = current_game_state.block3
+    board = current_game_state.board
+    score = current_game_state.score
+
+    successor_empty_tiles = np.sum(board == 0)
+
+    # number of legal moves in the successor state
+    num_legal_moves_successor = len(current_game_state.get_legal_actions())
+
+    return score + 1000 * num_legal_moves_successor + 10 * successor_empty_tiles
+
+
+
 
 
 class MultiAgentSearchAgent(Agent):

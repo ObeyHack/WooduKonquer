@@ -1,19 +1,34 @@
+import numpy as np
 from gymnasium import Env
 from src.util import raiseNotDefined
 import copy
 
 
 class GameState:
-    def __init__(self, env: Env):
+    def __init__(self, env: Env, observation, info):
+        """
+
+        :param env:
+        :param observation:
+                board: a 2D list representing the board state
+                block_1: a 2D list representing the block state
+                block_2: a 2D list representing the block state
+        :param info:
+                "action_mask" - legal actions
+                "combo" - number of combo
+                "straight" - number of straight
+                "score" - current score
+                "terminated" - is the game terminated
+        """
         self._env = env
-        self._cur_observation = self._env.reset()[0]
+        self._cur_observation = observation
         self._woodoku_env = self._env.env.env
         self._woodoku_env.__deepcopy__ = self.__copy
         self.terminated = False
-        self.legal_action = [1 for _ in range(243)]
-        self._combo = 0
-        self._straight = 0
-        self._score = 0
+        self.legal_action = np.array([i for i in range(len(info["action_mask"])) if info["action_mask"][i] == 1])
+        self._combo = info["combo"]
+        self._straight = info["straight"]
+        self._score = info["score"]
 
     def __copy(self, memo):
         from copy import deepcopy, copy
@@ -35,7 +50,13 @@ class GameState:
     def __deepcopy__(self, memo):
         from copy import deepcopy
         env2 = deepcopy(self._env)
-        return GameState(env2)
+        info ={
+            "action_mask": self.legal_action,
+            "combo": self._combo,
+            "straight": self._straight,
+            "score": self._score,
+        }
+        return GameState(env2, deepcopy(self._cur_observation), deepcopy(info))
 
 
     def is_terminated(self):
@@ -59,15 +80,15 @@ class GameState:
 
     @property
     def block1(self):
-        return self._cur_observation["block1"]
+        return self._cur_observation["block_1"]
 
     @property
     def block2(self):
-        return self._cur_observation["block2"]
+        return self._cur_observation["block_2"]
 
     @property
     def block3(self):
-        return self._cur_observation["block3"]
+        return self._cur_observation["block_3"]
 
     @property
     def score(self):
@@ -146,7 +167,8 @@ class Game:
         Run the game
         :return: score of the game
         """
-        state = GameState(self.env)
+        obs, info = self.env.reset()
+        state = GameState(self.env, obs, info)
         terminated = False
         score = 0
         while not terminated:
