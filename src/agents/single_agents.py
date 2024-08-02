@@ -74,10 +74,7 @@ class ReflexAgent(Agent):
 
         "*** YOUR CODE HERE ***"
 
-        num_legal_moves = len(current_game_state.get_legal_actions())
         num_legal_moves_successor = len(successor_game_state.get_legal_actions())
-        num_legal_moves_diff = num_legal_moves_successor - num_legal_moves
 
         # Num of block the moved block is adjacent to in the successor state
-
-        return reward + 100 * num_legal_moves_diff
+        return reward + 100 * num_legal_moves_successor

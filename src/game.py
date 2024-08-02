@@ -21,8 +21,7 @@ class GameState:
         result = cls.__new__(cls)
         memo[id(self._woodoku_env)] = result
         for k, v in self._woodoku_env.__dict__.items():
-            if (k == "window" or k == "observation_space" or k == "action_space" or
-                    k == "_np_random" or k == "spec"):
+            if (k == "window" or k == "observation_space" or k == "action_space"):
                 setattr(result, k, copy(v))
                 continue
 
