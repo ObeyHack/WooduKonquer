@@ -2,7 +2,7 @@ import argparse
 from agents.single_agents import RandomAgent, ReflexAgent
 from agents.multi_agents import MinmaxAgent, AlphaBetaAgent, ExpectimaxAgent
 from agents.RL_agents.qlearning import QLearningAgent, ApproximateQAgent
-from agents.RL_agents.mantoCarloAgent import MantoCarloAgent
+from agents.RL_agents.mantoCarloControl import MCControlAgent
 from gameRunner import GameRunner
 
 SUMMARY_ITERS = 10
@@ -15,7 +15,7 @@ agents = {
     "expectimax": ExpectimaxAgent,
     "q_learning": QLearningAgent,
     "q_approx": ApproximateQAgent,
-    "manto_carlo": MantoCarloAgent,
+    "mc_control": MCControlAgent,
 }
 
 render_modes = {
@@ -26,7 +26,7 @@ render_modes = {
     "Testing": None,
 }
 
-RL_agents = ["q_learning", "q_approx", "manto_carlo"]
+RL_agents = ["q_learning", "q_approx", "mc_control"]
 
 
 def parse_args():

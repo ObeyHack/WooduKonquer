@@ -9,7 +9,7 @@ from src.RLgame import RLgameState
 from src.agents.RL_agents.qlearning import QLearningAgent
 
 
-class MantoCarloAgent(QLearningAgent):
+class MCControlAgent(QLearningAgent):
     def __init__(self, **args):
         super().__init__(**args)
         self.q_values = collections.defaultdict(float)
