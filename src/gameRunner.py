@@ -78,7 +78,7 @@ class GameRunner(object):
         self.setup_env()
 
         if self.should_train:
-            rewards =self._train()
+            self._train()
 
         scores = []
         for i in range(self.num_episodes):
