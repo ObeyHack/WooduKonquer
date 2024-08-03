@@ -3,6 +3,8 @@ import gym_woodoku
 import os
 import neptune
 from dotenv import load_dotenv
+from neptune.types import File
+
 from game import Game
 from src.RLgame import RLAgent
 
@@ -52,7 +54,7 @@ class GameRunner(object):
         self._woodoku_env.render_mode = self.render_mode
 
         if self.logger:
-            self.logger["rewards"] = rewards
+            self.logger["rewards"].extend(rewards)
 
     def _log_videos(self):
         # all video files are stored in the video_folder named: {agent_type}*

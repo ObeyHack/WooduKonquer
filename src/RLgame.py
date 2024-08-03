@@ -142,4 +142,5 @@ class RLAgent(Agent):
 
         if plot_rewards:
             plot(rewards)
+
         return rewards
