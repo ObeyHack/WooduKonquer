@@ -51,11 +51,6 @@ def main():
     args = parse_args()
 
     agent = agents[args.agent]()
-    # if args.agent in RL_agents:
-    #     game = RLGame(env, agents[args.agent]())
-    # else:
-    #     game = Game(env, agents[args.agent]())
-
     should_train = args.agent in RL_agents
     iters = 1 if args.render != "SummaryDisplay" else SUMMARY_ITERS
     should_log = (args.render == "SummaryDisplay")
