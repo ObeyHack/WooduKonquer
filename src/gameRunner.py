@@ -46,10 +46,13 @@ class GameRunner(object):
 
         # Train the agent
         print("Training the agent")
-        RLAgent.train_agent(self.agent, self.env, num_episodes=1000, plot_rewards=True)
+        rewards = RLAgent.train_agent(self.agent, self.env, num_episodes=1000, plot_rewards=False)
 
         # Turn on rendering
         self._woodoku_env.render_mode = self.render_mode
+
+        if self.logger:
+            self.logger["rewards"] = rewards
 
     def _log_videos(self):
         # all video files are stored in the video_folder named: {agent_type}*
@@ -75,7 +78,7 @@ class GameRunner(object):
         self.setup_env()
 
         if self.should_train:
-            self._train()
+            rewards =self._train()
 
         scores = []
         for i in range(self.num_episodes):

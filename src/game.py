@@ -60,6 +60,17 @@ class GameState:
         }
         return GameState(env2, deepcopy(self._cur_observation), deepcopy(info))
 
+    def __eq__(self, othr):
+        return (isinstance(othr, type(self))
+                and ((self.board == othr.board).all()) and
+                (self.block1 == othr.block1).all() and
+                (self.block2 == othr.block2).all() and
+                (self.block3 == othr.block3).all())
+
+    def __hash__(self):
+        """Converts a state consisting of numpy arrays to a hashable type (tuple)."""
+        return hash((self.board.tostring(), self.block1.tostring(), self.block2.tostring(), self.block3.tostring()))
+
 
     def is_terminated(self):
         return self.terminated

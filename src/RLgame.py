@@ -8,58 +8,11 @@ import gymnasium as gym
 
 
 class RLgameState(GameState):
-    def __init__(self, env: Env, observation):
-        self._env = env
-        self._woodoku_env = self._env.env.env
-        self._cur_observation = observation
-        self.terminated = False
-        self._combo = 0
-        self._straight = 0
-
-    def get_legal_actions(self):
-        # state is a dict of board, piece1, piece2, piece3
-        # board is the value of the board
-        # piece1, piece2, piece3 are the 3 pieces that can be placed on the board
-        board = self._cur_observation['board']
-        piece1 = self._cur_observation['block_1']
-        piece2 = self._cur_observation['block_2']
-        piece3 = self._cur_observation['block_3']
-        pieces = [piece1, piece2, piece3]
-        legal_actions = []
-
-        for piece_index, piece in enumerate(pieces):
-            # if piece is all zero matrix then skip
-            if np.all(piece == 0):
-                continue
-            for row in range(9):
-                for col in range(9):
-                    # Place block_1 at ((action-0) // 9, (action-0) % 9) ,
-                    # Place block_2 at ((action-81) // 9, (action-81) % 9),
-                    # Place block_3 at ((action-162) // 9, (action-162) % 9)
-                    # calculate  Discrete(243) = 81*row + 9*col + piece_index
-                    action_helper = 81 * piece_index + 9 * row + col
-                    if self._woodoku_env._is_valid_position(action_helper):
-                        legal_actions.append((piece_index, row, col))
-
-        legal_actions = [81 * action[0] + 9 * action[1] + action[2] for action in legal_actions]
-        return legal_actions
 
     def apply_action(self, action):
-        observation, reward, terminated, _, info = self._env.step(action)
-        new_state = RLgameState(self._env, observation)
-        self.terminated = terminated
-        self._combo = info["combo"]
-        self._straight = info["straight"]
-        return new_state, reward, terminated, info
-
-    def __eq__(self, othr):
-        return (isinstance(othr, type(self))
-                and (self.board, self.block1, self.block2, self.block3) ==
-                (othr.board, othr.block1, othr.block2, othr.block3))
-
-    def __hash__(self):
-        """Converts a state consisting of numpy arrays to a hashable type (tuple)."""
-        return hash((self.board.tostring(), self.block1.tostring(), self.block2.tostring(), self.block3.tostring()))
+        from copy import deepcopy
+        new_state = deepcopy(self)
+        return new_state.apply_action(action)
 
     @staticmethod
     def reward_for_clearing_board(board, previous_board, done, truncated):
@@ -170,7 +123,8 @@ class RLAgent(Agent):
 
         rewards = []
         for episode in tqdm(range(num_episodes)):
-            state = RLgameState(env, env.reset()[0])
+            obs, info = env.reset()
+            state = RLgameState(env, obs, info)
             step = 0
             run_reward = 0
             while step < max_steps:
@@ -189,42 +143,3 @@ class RLAgent(Agent):
         if plot_rewards:
             plot(rewards)
         return rewards
-
-
-class RLGame(Game):
-    def __init__(self, env: Env, agent: RLAgent):
-        """
-        environment
-        :param env: gym environment
-        :param agent: age
-        """
-        self.env = env
-        self.agent = agent
-
-    def run(self):
-        """
-        Run the game
-        :return: score of the game
-        """
-        # Turn off rendering
-        render_mode = self.env.env.env.render_mode
-        self.env.env.env.render_mode = None
-
-        # Train the agent
-        print("Training the agent")
-        RLAgent.train_agent(self.agent, self.env, num_episodes=1000, plot_rewards=True)
-
-        # Turn on rendering
-        self.env.env.env.render_mode = render_mode
-
-        state = RLgameState(self.env, self.env.reset()[0])
-        terminated = False
-        score = 0
-        while not terminated:
-            # render the environment
-            self.env.render()
-            # take action
-            action = self.agent.get_action(state)
-            state, reward, terminated, info = state.apply_action(action)
-            score = state.score
-        return score
