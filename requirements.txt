@@ -5,5 +5,5 @@ ffmpeg
 imageio-ffmpeg
 keyboard
 seaborn
-comet_ml
 python-dotenv
+neptune

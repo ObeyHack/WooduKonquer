@@ -1,15 +1,12 @@
 import gym_woodoku
 import gymnasium as gym
+import argparse
 from agents.single_agents import RandomAgent, ReflexAgent
 from agents.multi_agents import MinmaxAgent, AlphaBetaAgent, ExpectimaxAgent
 from agents.RL_agents.qlearning import QLearningAgent, ApproximateQAgent
-import argparse
+from gameRunner import GameRunner
 from game import Game
 from RLgame import RLGame
-from comet_ml import Experiment
-from comet_ml.integration.gymnasium import CometLogger
-from dotenv import load_dotenv
-import os
 
 SUMMARY_ITERS = 5
 
@@ -54,39 +51,21 @@ def parse_args():
     return args
 
 
-def configure_logger(env):
-    """
-    Configure comet logger
-    :return: comet logger
-    """
-    load_dotenv('./../.env')
-    experiment = Experiment(
-        api_key=os.getenv("API_TOKEN"),
-        project_name=os.getenv("PROJECT_NAME"),
-        workspace=os.getenv("WORKSPACE_NAME"),
-    )
-    return CometLogger(env, experiment)
-
-
 def main():
     args = parse_args()
 
     env = gym.make('gym_woodoku/Woodoku-v0', game_mode='woodoku', render_mode=render_modes[args.render])
-    # env = configure_logger(env)
 
+    agent = agents[args.agent]()
     if args.agent in RL_agents:
         game = RLGame(env, agents[args.agent]())
     else:
         game = Game(env, agents[args.agent]())
 
     iters = 1 if args.render != "SummaryDisplay" else SUMMARY_ITERS
-    scores = []
-    for i in range(iters):
-        scores.append(game.run())
-        print(f"Score: {scores[-1]}")
+    should_log = (args.render == "SummaryDisplay")
 
-    if args.render == "SummaryDisplay":
-        print(f"Average score over {SUMMARY_ITERS} iterations: {sum(scores) / SUMMARY_ITERS}")
+    GameRunner(env, agent, iters, args.agent, should_log=should_log).play()
 
 
 if __name__ == "__main__":
