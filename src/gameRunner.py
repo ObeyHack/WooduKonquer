@@ -48,7 +48,7 @@ class GameRunner(object):
 
         # Train the agent
         print("Training the agent")
-        rewards = RLAgent.train_agent(self.agent, self.env, num_episodes=1000, plot_rewards=False)
+        rewards = self.agent.train_agent(self.env, logger=self.logger)
 
         # Turn on rendering
         self._woodoku_env.render_mode = self.render_mode

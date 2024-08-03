@@ -1,4 +1,7 @@
 import collections
+
+from tqdm import tqdm
+
 from src import util
 from src.RLgame import RLgameState, RLAgent
 import random
@@ -42,6 +45,32 @@ class QLearningAgent(RLAgent):
         sample = reward + self.discount * next_value
         self.q_values[state, action] = (1 - self.alpha) * q_value + self.alpha * sample
         return self.q_values[state, action]
+
+    def train_agent(self, env, max_steps=1000, logger=None):
+        rewards = []
+        for episode in tqdm(range(self.num_episodes)):
+            obs, info = env.reset()
+            state = RLgameState(env, obs, info)
+            step = 0
+            run_reward = 0
+            while step < max_steps:
+                action = self.get_action(state)
+                next_state, reward, terminated, info = state.apply_action(action)
+                if state.is_terminated():
+                    break
+                run_reward += reward
+                self.update(state, action, next_state, reward)
+                step += 1
+                state = next_state
+
+            # print(f'Episode {episode}, Reward {run_reward}, Score {state.score}')
+            rewards.append(run_reward)
+
+        if logger:
+            logger["rewards"].extend(rewards)
+
+        self.set_trained()
+        return rewards
 
 
 class ApproximateQAgent(QLearningAgent):

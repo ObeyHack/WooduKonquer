@@ -36,10 +36,3 @@ class MonteCarloAgent(RLAgent):
 
         action = self.get_policy(state)
         return action
-
-    def update(self, state: RLgameState, action, next_state: RLgameState, reward: int):
-        q_value = self.get_q_value(state, action)
-        next_value = self.get_value(next_state)
-        sample = reward + self.discount * next_value
-        self.q_values[state, action] = (1 - self.alpha) * q_value + self.alpha * sample
-        return self.q_values[state, action]

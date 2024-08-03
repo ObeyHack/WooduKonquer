@@ -57,7 +57,7 @@ class RLgameState(GameState):
 
 
 class RLAgent(Agent):
-    def __init__(self, alpha=1.0, epsilon=0.05, gamma=0.8):
+    def __init__(self, alpha=1.0, epsilon=0.05, gamma=0.8, num_episodes=1000):
         """
         Sets options, which can be passed in via the Pacman command line using -a alpha=0.5,...
         alpha    - learning rate
@@ -69,6 +69,7 @@ class RLAgent(Agent):
         self.epsilon = float(epsilon)
         self.discount = float(gamma)
         self.is_trained = False
+        self.num_episodes = num_episodes
 
     def set_trained(self):
         self.is_trained = True
@@ -115,36 +116,5 @@ class RLAgent(Agent):
         """
         util.raiseNotDefined()
 
-    @staticmethod
-    def train_agent(agent, env, num_episodes=1000, max_steps=1000, plot_rewards=False):
-        def plot(rewards):
-            import matplotlib.pyplot as plt
-            plt.plot(rewards)
-            plt.xlabel('Episode')
-            plt.ylabel('Reward')
-            plt.title('Reward vs Episode')
-
-        rewards = []
-        for episode in tqdm(range(num_episodes)):
-            obs, info = env.reset()
-            state = RLgameState(env, obs, info)
-            step = 0
-            run_reward = 0
-            while step < max_steps:
-                action = agent.get_action(state)
-                next_state, reward, terminated, info = state.apply_action(action)
-                if state.is_terminated():
-                    break
-                run_reward += reward
-                agent.update(state, action, next_state, reward)
-                step += 1
-                state = next_state
-
-            #print(f'Episode {episode}, Reward {run_reward}, Score {state.score}')
-            rewards.append(run_reward)
-
-        if plot_rewards:
-            plot(rewards)
-
-        agent.set_trained()
-        return rewards
+    def train_agent(self, env, max_steps=1000, logger=None):
+        util.raiseNotDefined()
