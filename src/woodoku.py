@@ -20,7 +20,7 @@ render_modes = {
     "GUI": "human",
     "Video": "rgb_array",
     "Text": "ansi",
-    "SummaryDisplay": "rgb_array",
+    "SummaryDisplay": None,
     "Testing": None,
 }
 
