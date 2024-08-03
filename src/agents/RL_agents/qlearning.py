@@ -29,7 +29,7 @@ class QLearningAgent(RLAgent):
         return max(q_values, key=q_values.get)
 
     def get_action(self, state: RLgameState):
-        if random.random() < self.epsilon:
+        if (not self.is_trained) and random.random() < self.epsilon:
             action = random.choice(state.get_legal_actions())
             return action
 

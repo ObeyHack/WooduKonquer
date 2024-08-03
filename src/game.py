@@ -107,6 +107,14 @@ class GameState:
     def score(self):
         return self._score
 
+    @property
+    def action_space(self):
+        return self._woodoku_env.action_space
+
+    @property
+    def observation_space(self):
+        return self._woodoku_env.observation_space
+
     def get_legal_actions(self):
         return self.legal_action
 

@@ -68,6 +68,10 @@ class RLAgent(Agent):
         self.alpha = float(alpha)
         self.epsilon = float(epsilon)
         self.discount = float(gamma)
+        self.is_trained = False
+
+    def set_trained(self):
+        self.is_trained = True
 
     def get_q_value(self, state: RLgameState, action):
         """
@@ -142,4 +146,5 @@ class RLAgent(Agent):
         if plot_rewards:
             plot(rewards)
 
+        agent.set_trained()
         return rewards
