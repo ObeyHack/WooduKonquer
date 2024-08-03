@@ -173,6 +173,7 @@ class Game:
         state = GameState(self.env, obs, info)
         terminated = False
         score = 0
+        steps = 0
         while not terminated:
             # render the environment
             self.env.render()
@@ -180,4 +181,8 @@ class Game:
             action = self.agent.get_action(state)
             state, reward, terminated, info = state.apply_action(action)
             score += reward
+            steps += 1
+
+            if steps % 500 == 0:
+                print(f"Step: {steps}, Score: {score}")
         return score

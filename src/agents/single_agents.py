@@ -37,7 +37,7 @@ class ReflexAgent(Agent):
         legal_moves = game_state.get_legal_actions()
 
         # Choose one of the best actions
-        scores = [self.evaluation_function(game_state, action) for action in legal_moves]
+        scores = [self.evaluation_function(game_state, action) for action in tqdm(legal_moves)]
         best_score = max(scores)
         best_indices = [index for index in range(len(scores)) if scores[index] == best_score]
         chosen_index = np.random.choice(best_indices)  # Pick randomly among the best
