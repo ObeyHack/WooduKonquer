@@ -119,7 +119,6 @@ class RLAgent(Agent):
             plt.xlabel('Episode')
             plt.ylabel('Reward')
             plt.title('Reward vs Episode')
-            plt.show()
 
         rewards = []
         for episode in tqdm(range(num_episodes)):
