@@ -1,12 +1,8 @@
-
-
-
 import collections
 import numpy as np
 from src import util
 from src.RLgame import RLgameState, RLAgent
 import random
-
 
 
 class QLearningAgent(RLAgent):
