@@ -1,14 +1,10 @@
-import gym_woodoku
-import gymnasium as gym
 import argparse
 from agents.single_agents import RandomAgent, ReflexAgent
 from agents.multi_agents import MinmaxAgent, AlphaBetaAgent, ExpectimaxAgent
 from agents.RL_agents.qlearning import QLearningAgent, ApproximateQAgent
 from gameRunner import GameRunner
-from game import Game
-from RLgame import RLGame
 
-SUMMARY_ITERS = 5
+SUMMARY_ITERS = 10
 
 agents = {
     "random": RandomAgent,
@@ -24,7 +20,7 @@ render_modes = {
     "GUI": "human",
     "Video": "rgb_array",
     "Text": "ansi",
-    "SummaryDisplay": None,
+    "SummaryDisplay": "rgb_array",
     "Testing": None,
 }
 
@@ -54,18 +50,18 @@ def parse_args():
 def main():
     args = parse_args()
 
-    env = gym.make('gym_woodoku/Woodoku-v0', game_mode='woodoku', render_mode=render_modes[args.render])
-
     agent = agents[args.agent]()
-    if args.agent in RL_agents:
-        game = RLGame(env, agents[args.agent]())
-    else:
-        game = Game(env, agents[args.agent]())
+    # if args.agent in RL_agents:
+    #     game = RLGame(env, agents[args.agent]())
+    # else:
+    #     game = Game(env, agents[args.agent]())
 
+    should_train = args.agent in RL_agents
     iters = 1 if args.render != "SummaryDisplay" else SUMMARY_ITERS
     should_log = (args.render == "SummaryDisplay")
 
-    GameRunner(env, agent, iters, args.agent, should_log=should_log).play()
+    GameRunner(agent, iters, args.agent, render_modes[args.render], should_log=should_log,
+                should_train=should_train).play()
 
 
 if __name__ == "__main__":

@@ -1,22 +1,25 @@
+import gymnasium as gym
+import gym_woodoku
 import os
 import neptune
 from dotenv import load_dotenv
-from game import GameState, Agent, Game
+from game import Game
 from src.RLgame import RLAgent
 
 
 class GameRunner(object):
-    def __init__(self, env, agent, num_runs, agent_type, should_log=False, should_train=False):
-        self.env = env
+    def __init__(self, agent, num_runs, agent_type, render_mode, should_log=False, should_train=False):
+        self._woodoku_env = None
+        self.game = None
+        self.env = None
         self.agent = agent
         self.num_episodes = num_runs
-        self.render_mode = self.env.env.env.render_mode
+        self.render_mode = render_mode
         self.logger = None
+        self.agent_type = agent_type
         if should_log:
-            self.logger = self.configure_logger(agent_type)
-
+            self.logger = self.configure_logger(self.agent_type)
         self.should_train = should_train
-        self.game = Game(self.env, self.agent)
 
     def configure_logger(self, agent_type):
         """
@@ -35,21 +38,42 @@ class GameRunner(object):
         run = neptune.init_run(**logger_config)
         return run
 
-
     def _log(self, score):
         self.logger["score"].append(score)
 
     def _train(self):
-        self.env.env.env.render_mode = None
+        self._woodoku_env.render_mode = None
 
         # Train the agent
         print("Training the agent")
         RLAgent.train_agent(self.agent, self.env, num_episodes=1000, plot_rewards=True)
 
         # Turn on rendering
-        self.env.env.env.render_mode = self.render_mode
+        self._woodoku_env.render_mode = self.render_mode
+
+    def _log_videos(self):
+        # all video files are stored in the video_folder named: {agent_type}*
+        video_folder = "./video_folder"
+        for file in os.listdir(video_folder):
+            if file.startswith(self.agent_type):
+                path = os.path.join(video_folder, file)
+                self.logger[file].upload(path)
+
+    def setup_env(self):
+        self.env = gym.make('gym_woodoku/Woodoku-v0', game_mode='woodoku', render_mode=self.render_mode)
+        if self.render_mode == "rgb_array":
+            self.env = gym.wrappers.RecordVideo(self.env, video_folder='./video_folder',
+                                                episode_trigger=lambda x: x % 5 == 0, name_prefix=self.agent_type)
+
+        self._woodoku_env = self.env.env.env
+        if self.env.render_mode == "rgb_array":
+            self._woodoku_env = self.env.env.env.env
+
+        self.game = Game(self.env, self.agent)
 
     def play(self):
+        self.setup_env()
+
         if self.should_train:
             self._train()
 
@@ -65,6 +89,10 @@ class GameRunner(object):
 
         print(f"Average score over {self.num_episodes} iterations: {sum(scores) / self.num_episodes}")
 
+        self.env.close()
+        
         if self.logger:
+            self.logger["average_score"] = sum(scores) / self.num_episodes
+            self._log_videos()
             self.logger.stop()
 
