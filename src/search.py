@@ -74,7 +74,7 @@ class Node:
     def __repr__(self):
         return "<Node %s>" % (self.state,)
 
-    def nodePath(self):
+    def node_path(self):
         "Create a list of nodes from the root to this node."
         x, result = self, [self]
         while x.parent:
@@ -99,6 +99,13 @@ class Node:
         "Return a list of nodes reachable from this node. [Fig. 3.8]"
         return [Node(next, self, act, cost)
                 for (next, act, cost) in problem.get_successors(self.state)]
+
+    @property
+    def parent_action(self):
+        """
+        Create a list of actions from the root to this node.
+        """
+        return self.action
 
 
 REVERSE_PUSH = False

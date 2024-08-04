@@ -1,6 +1,7 @@
 import argparse
 from agents.single_agents import RandomAgent, ReflexAgent
 from agents.multi_agents import MinmaxAgent, AlphaBetaAgent, ExpectimaxAgent
+from agents.monte_carlo_tree_search import MCST_agent
 from agents.RL_agents.qlearning import QLearningAgent, ApproximateQAgent
 from agents.RL_agents.mantoCarloControl import MCControlAgent
 from gameRunner import GameRunner
@@ -10,6 +11,7 @@ SUMMARY_ITERS = 10
 agents = {
     "random": RandomAgent,
     "reflex": ReflexAgent,
+    "mtcs": MCST_agent,
     "minimax": MinmaxAgent,
     "alpha_beta": AlphaBetaAgent,
     "expectimax": ExpectimaxAgent,
