@@ -68,7 +68,7 @@ class MCSTNode(Node):
         child_state = self.state.generate_successor(action)
         return MCSTNode(child_state, parent=self, action=action)
 
-    def populate_children(self, expend_num=50) -> None:
+    def expand(self, expend_num=50) -> None:
         """Creates and populates the children of this node by randomly
         selecting moves and determining the resultant state
         """
@@ -85,14 +85,14 @@ class MCST_agent(Agent):
         super().__init__()
         self.time_limit = time_limit
 
-    def get_action(self, state):
+    def get_action(self, state: GameState):
         # Implement the getAction method here
         start_time = clock()
         root = MCSTNode(state)
 
         while clock() - start_time < self.time_limit:
             leaf = self.select_node(root)
-            leaf.populate_children()
+            leaf = self.expand(leaf)
             reward = self.rollout(leaf)
             self.backpropagate(leaf, reward)
 
@@ -115,12 +115,29 @@ class MCST_agent(Agent):
             node = random.choice(max_nodes)
         return node
 
-    def rollout(self, current_node: Node) -> int:
+    def expand(self, node: MCSTNode) -> MCSTNode:
+        """
+        Expand the current node by adding all possible children.
+        """
+        if node.times_visited == 0 or node.state.is_terminated():
+            return node
+
+        node.expand()
+        # pick a random child
+        children = node.children.values()
+        child = random.choice(list(children))
+        return child
+
+    def rollout(self, current_node: MCSTNode) -> int:
         """
         Conduct a playout from the current node.
         """
         state = current_node.state
-        return len(list(state.get_legal_actions()))
+        # while not state.is_terminated():
+        #     action = random.choice(state.get_legal_actions())
+        #     state = state.generate_successor(action)
+
+        return len(state.get_legal_actions())
 
     def backpropagate(self, node: MCSTNode, reward: int) -> None:
         """
