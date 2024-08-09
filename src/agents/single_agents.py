@@ -1,4 +1,5 @@
 from random import random
+from src.evaluations import evaluationFunctions
 
 import numpy as np
 from tqdm import tqdm
@@ -23,7 +24,6 @@ class ReflexAgent(Agent):
     it in any way you see fit, so long as you don't touch our method
     headers.
     """
-
     def get_action(self, game_state):
         """
         You do not need to change this method, but you're welcome to.
@@ -76,4 +76,4 @@ class ReflexAgent(Agent):
         # number of legal moves in the successor state
         num_legal_moves_successor = len(successor_game_state.get_legal_actions())
 
-        return score + 1000 * num_legal_moves_successor + square_count ** 2 + 10 * successor_empty_tiles
+        return score + 1000 * num_legal_moves_successor + square_count ** 2 + 10 * successor_empty_tiles + evaluationFunctions.avoid_jagged_edges(current_game_state, action)
