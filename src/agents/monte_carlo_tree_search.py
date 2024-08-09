@@ -128,14 +128,16 @@ class MCST_agent(Agent):
         child = random.choice(list(children))
         return child
 
-    def rollout(self, current_node: MCSTNode) -> int:
+    def rollout(self, current_node: MCSTNode, epoch=5) -> int:
         """
         Conduct a playout from the current node.
         """
         state = current_node.state
-        # while not state.is_terminated():
-        #     action = random.choice(state.get_legal_actions())
-        #     state = state.generate_successor(action)
+        i = 0
+        while not state.is_terminated() and i < epoch:
+            action = random.choice(state.get_legal_actions())
+            state = state.generate_successor(action)
+            i += 1
 
         return len(state.get_legal_actions())
 

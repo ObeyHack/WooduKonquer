@@ -202,6 +202,6 @@ class Game:
             score += reward
             steps += 1
 
-            if steps % 500 == 0:
+            if steps % 50 == 0:
                 print(f"Step: {steps}, Score: {score}")
         return score
