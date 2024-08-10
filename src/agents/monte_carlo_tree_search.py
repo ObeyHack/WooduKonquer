@@ -118,11 +118,11 @@ class MCST_agent(Agent):
             node = random.choice(max_nodes)
         return node
 
-    def expand(self, node: MCSTNode) -> MCSTNode:
+    def expand(self, node: MCSTNode, k=10) -> MCSTNode:
         """
         Expand the current node by adding all possible children.
         """
-        if node.times_visited == 0 or node.state.is_terminated():
+        if node.times_visited < k or node.state.is_terminated():
             return node
 
         node.expand()
