@@ -81,22 +81,25 @@ class MCSTNode(Node):
 
 
 class MCST_agent(Agent):
-    def __init__(self, time_limit=3):
+    def __init__(self, time_limit=1):
         super().__init__()
         self.time_limit = time_limit
+        self.root = None
 
     def get_action(self, state: GameState):
         # Implement the getAction method here
         start_time = clock()
-        root = MCSTNode(state)
+        if self.root is None:
+            self.root = MCSTNode(state)
 
         while clock() - start_time < self.time_limit:
-            leaf = self.select_node(root)
+            leaf = self.select_node(self.root)
             leaf = self.expand(leaf)
             reward = self.rollout(leaf)
             self.backpropagate(leaf, reward)
 
-        action = self.get_best_child_action(root)
+        best_node, action = self.get_best_child_action(self.root)
+        self.root = best_node
         return action
 
     def select_node(self, root_node: MCSTNode) -> MCSTNode:
@@ -150,7 +153,7 @@ class MCST_agent(Agent):
             node.Q += reward
             node = node.parent
 
-    def get_best_child_action(self, node: MCSTNode) -> int:
+    def get_best_child_action(self, node: MCSTNode) -> (MCSTNode, int):
         """Determines the action that is expected to return the highest valuation
         from the given node
 
@@ -159,6 +162,7 @@ class MCST_agent(Agent):
 
         Returns:
             action (int): The action that is expected to return the highest valuation
+            node (MCSTNode): The node that is expected to return the highest valuation
         """
         best_child = list(node.children.items())[0][1]
         best_action = list(node.children.items())[0][0]
@@ -171,7 +175,7 @@ class MCST_agent(Agent):
                 best_child = child
                 best_action = action
 
-        return best_action
+        return best_child, best_action
 
 
 
