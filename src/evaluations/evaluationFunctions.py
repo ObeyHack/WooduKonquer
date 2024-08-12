@@ -42,8 +42,16 @@ def triple_move(current_game_state : GameState, action: int):
     blocks = [block_1, block_2, block_3]
 
 
+def matching_blocks(current_game_state : GameState, action: int):
+    successor_game_state = current_game_state.generate_successor(action=action)
+    block_1 = current_game_state.block1
+    block_2 = current_game_state.block2
+    block_3 = current_game_state.block3
+    blocks = [block_1, block_2, block_3]
 
-def is_component_convex(self,component):
+
+
+def is_component_convex(component):
     """
     Check if the given component (a binary numpy array) is convex.
     The component is assumed to be a binary mask (1s and 0s).
@@ -57,7 +65,7 @@ def is_component_convex(self,component):
     # Check if the largest contour is convex
     return cv2.isContourConvex(contours[0])
 
-def board_density(self,board):
+def board_density(board):
     """
     Calculate the density of filled blocks on the board.
     Density is defined as the ratio of filled blocks to total blocks.
@@ -66,7 +74,7 @@ def board_density(self,board):
     filled_blocks = np.sum(board)
     return filled_blocks / total_blocks
 
-def evaluation_function_3(self, current_game_state, action):
+def evaluation_function_3(current_game_state, action):
     """
     This evaluation function considers both the number and shape of connected components
     on the board after a move. It aims to minimize the number of components, prefers
@@ -81,8 +89,8 @@ def evaluation_function_3(self, current_game_state, action):
     successor_board = successor_game_state.board
 
     # Calculate the density of filled blocks
-    current_density = self.board_density(current_board)
-    successor_density = self.board_density(successor_board)
+    current_density = board_density(current_board)
+    successor_density = board_density(successor_board)
 
     # Invert the board to find empty space regions
     inverted_board = 1 - successor_board
@@ -103,13 +111,13 @@ def evaluation_function_3(self, current_game_state, action):
     for label in range(1, num_labels):
         component = (labels == label).astype(np.uint8)
         score += component_penalty  # Penalize for having a component
-        if self.is_component_convex(component):
+        if is_component_convex(component):
             score += convex_reward  # Reward for convex shape
         else:
             score += non_convex_penalty  # Penalize for non-convex shape
 
     # Reward for improved board density
-    score +=  -(successor_density - current_density)
+    score += -(successor_density - current_density)
 
     # Reward for clearing blocks
     cleared_blocks = np.sum(current_board) - np.sum(successor_board)
@@ -121,7 +129,7 @@ def evaluation_function_3(self, current_game_state, action):
 
     return score
 
-def evaluation_function_4(self, current_game_state, action):
+def evaluation_function_4(current_game_state, action):
     """
     This evaluation function considers both the number and shape of connected components
     on the board after a move. It aims to minimize the number of components and prefers
@@ -145,26 +153,30 @@ def evaluation_function_4(self, current_game_state, action):
 
     # Set weights for different factors
     component_penalty = -10  # Penalty per component
-    convex_reward = 5  # Reward for convex component
-    non_convex_penalty = -20  # Additional penalty for non-convex component
+    convex_reward = 10  # Reward for convex component
+    non_convex_penalty = -20 # Additional penalty for non-convex component
 
     for label in range(1, num_labels):
         component = (labels == label).astype(np.uint8)
         score += component_penalty  # Penalize for having a component
-        if self.is_component_convex(component):
+        if is_component_convex(component):
             score += convex_reward  # Reward for convex shape
         else:
             score += non_convex_penalty  # Penalize for non-convex shape
 
-        # Factor in the number of legal moves in the successor state
+    block_1 = successor_game_state.block1
+    block_2 = successor_game_state.block2
+    block_3 = successor_game_state.block3
     num_legal_moves = len(successor_game_state.get_legal_actions())
+
+        # Factor in the number of legal moves in the successor state
 
         # Weight the legal moves positively to keep options open
     score += 15 * num_legal_moves
 
     return score
 
-def evaluation_function_5(self, current_game_state, action):
+def evaluation_function_5(current_game_state, action):
     #just legal actions and combos
     successor_game_state = current_game_state.generate_successor(action=action)
     block_1 = successor_game_state.block1
@@ -177,4 +189,4 @@ def evaluation_function_5(self, current_game_state, action):
     #get number of combos
     combo = successor_game_state.combo
     stright = successor_game_state.straight
-    return num_legal_moves_successor + combo*15+ stright*15
+    return num_legal_moves_successor + combo*15 + stright*15
