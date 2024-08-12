@@ -1,8 +1,45 @@
 import numpy as np
-from tqdm import tqdm
-
 from src.game import GameState
 import cv2
+
+
+
+def base_evaluation_function(current_game_state, action):
+    return current_game_state.score
+
+def evaluation_function(current_game_state, action):
+    """
+    Design a better evaluation function here.
+
+    The evaluation function takes in the current and proposed successor
+    GameStates (GameState.py) and returns a number, where higher numbers are better.
+
+    """
+    # Useful information you can extract from a GameState (game_state.py)
+    successor_game_state = current_game_state.generate_successor(action=action)
+    block_1 = successor_game_state.block1
+    block_2 = successor_game_state.block2
+    block_3 = successor_game_state.block3
+    board = successor_game_state.board
+    score = successor_game_state.score
+    moved_block, x, y = action // 81, (action % 81) // 9, (action % 81) % 9
+
+    "*** YOUR CODE HERE ***"
+    square_center = ((x // 3) * 3 + 1, (y // 3) * 3 + 1)
+
+    square_count = 0
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            square_count += board[square_center[0] + i, square_center[1] + j]
+
+    successor_empty_tiles = np.sum(board == 0)
+
+    # number of legal moves in the successor state
+    num_legal_moves_successor = len(successor_game_state.get_legal_actions())
+
+    return score + 1000 * num_legal_moves_successor + square_count ** 2 + 10 * successor_empty_tiles + avoid_jagged_edges(
+        current_game_state, action)
+
 
 def occupied_neighbours(board, x: int, y: int):
     occupied_blocks_count = 0

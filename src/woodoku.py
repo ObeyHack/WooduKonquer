@@ -47,6 +47,17 @@ def parse_args():
     parser.add_argument("-d", "--display", dest="render", type=str, choices=render_modes.keys(),
                         help="Render mode", default="GUI")
 
+    # log
+    parser.add_argument('-l', "--log", action='store_true', help='Log the game to a file', dest='log')
+
+    # # conditional arguments - evaluation function
+    # subparsers = parser.add_subparsers(dest='subcommand')
+    # #  subparser for dump
+    # parser_dump = subparsers.add_parser('reflex')
+    # # add a required argument
+    # parser_dump.add_argument("-e", "--evaluation", dest="evaluation", type=str,
+    #                          help="Evaluation function for reflex agent", required=True)
+
     args = parser.parse_args()
     return args
 
@@ -57,7 +68,7 @@ def main():
     agent = agents[args.agent]()
     should_train = args.agent in RL_agents
     iters = 1 if args.render != "SummaryDisplay" else SUMMARY_ITERS
-    should_log = (args.render == "SummaryDisplay")
+    should_log = args.log or (args.render == "SummaryDisplay")
 
     GameRunner(agent, iters, args.agent, render_modes[args.render], should_log=should_log,
                 should_train=should_train).play()

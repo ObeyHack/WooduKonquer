@@ -1,35 +1,9 @@
 import abc
-
 from tqdm import tqdm
-
 from src import util
 from src.game import Agent
 import numpy as np
-
-
-def score_evaluation_function(current_game_state):
-    """
-    This default evaluation function just returns the score of the state.
-    The score is the same one displayed in the GUI.
-
-    This evaluation function is meant for use with adversarial search agents
-    (not reflex agents).
-    """
-    block_1 = current_game_state.block1
-    block_2 = current_game_state.block2
-    block_3 = current_game_state.block3
-    board = current_game_state.board
-    score = current_game_state.score
-
-    successor_empty_tiles = np.sum(board == 0)
-
-    # number of legal moves in the successor state
-    num_legal_moves_successor = len(current_game_state.get_legal_actions())
-
-    return score + 1000 * num_legal_moves_successor + 10 * successor_empty_tiles
-
-
-
+from src.evaluations.evaluationStateFunctions import *
 
 
 class MultiAgentSearchAgent(Agent):
@@ -46,10 +20,11 @@ class MultiAgentSearchAgent(Agent):
     only partially specified, and designed to be extended.  Agent (game.py)
     is another abstract class.
     """
-
-    def __init__(self, evaluation_function='scoreEvaluationFunction', depth=1):
-        self.evaluation_function = score_evaluation_function
+    def __init__(self, evaluation_function='evaluation_function_4', depth=1):
+        super().__init__()
+        self.evaluation_function = util.lookup(evaluation_function, globals())
         self.depth = depth
+
 
     @abc.abstractmethod
     def get_action(self, game_state):

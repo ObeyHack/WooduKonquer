@@ -5,6 +5,17 @@ from src.game import GameState
 import cv2
 
 
+def score_evaluation_function(current_game_state):
+    """
+    This default evaluation function just returns the score of the state.
+    The score is the same one displayed in the GUI.
+
+    This evaluation function is meant for use with adversarial search agents
+    (not reflex agents).
+    """
+    return current_game_state.score
+
+
 def is_component_convex(component):
     """
     Check if the given component (a binary numpy array) is convex.
@@ -18,6 +29,7 @@ def is_component_convex(component):
 
     # Check if the largest contour is convex
     return cv2.isContourConvex(contours[0])
+
 
 def evaluation_function_4(current_game_state):
     """
@@ -56,9 +68,9 @@ def evaluation_function_4(current_game_state):
     block_3 = current_game_state.block3
     num_legal_moves = len(current_game_state.get_legal_actions())
 
-        # Factor in the number of legal moves in the successor state
+    # Factor in the number of legal moves in the successor state
 
-        # Weight the legal moves positively to keep options open
+    # Weight the legal moves positively to keep options open
     score += 15 * num_legal_moves
 
     return score
