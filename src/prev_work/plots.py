@@ -19,7 +19,7 @@ def plot(scores, names):
 
 def main():
     # WoodokuSolver - heuristics - https://github.com/Zeltq/WoodokuSolver/tree/main
-    score0 = np.array([630])
+    score0 = np.array([630, 2490, 6900, 4800])
     name0 = 'WoodokuSolver'
 
 
