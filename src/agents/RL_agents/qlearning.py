@@ -1,11 +1,8 @@
 import collections
-
 from tqdm import tqdm
-
 from src import util
 from src.RLgame import RLgameState, RLAgent
-from src.agents.RL_agents.featureExtractor import EstimationExtractor
-from src.agents.RL_agents.featureExtractor import SmartExtractor
+from src.agents.RL_agents.featureExtractor import *
 import random
 
 
@@ -84,7 +81,7 @@ class ApproximateQAgent(QLearningAgent):
      and update.  All other QLearningAgent functions
      should work as is.
   """
-  def __init__(self, extractor='EstimationExtractor', **args):
+  def __init__(self, extractor='EncodeExtractor', **args):
     super().__init__(**args)
     self.featExtractor = util.lookup(extractor, globals())()
 

@@ -7,5 +7,6 @@ keyboard
 seaborn
 python-dotenv
 neptune
-
+keras
 torch
+tensorflow

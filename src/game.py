@@ -2,7 +2,7 @@ import numpy as np
 from gymnasium import Env
 from src.util import raiseNotDefined
 import copy
-
+from gymnasium.utils import seeding
 
 class GameState:
     def __init__(self, env: Env, observation, info):
@@ -71,7 +71,6 @@ class GameState:
         """Converts a state consisting of numpy arrays to a hashable type (tuple)."""
         return hash((self.board.tostring(), self.block1.tostring(), self.block2.tostring(), self.block3.tostring()))
 
-
     def is_terminated(self):
         return self.terminated
 
@@ -130,6 +129,17 @@ class GameState:
 
     def generate_successor(self, action):
         new_state = copy.deepcopy(self)
+
+        # check if 2 of the blocks are 0
+        if ((np.all(new_state.block1 == 0) and np.all(new_state.block2 == 0)) or (
+                np.all(new_state.block1 == 0) and np.all(new_state.block3 == 0)) or (
+                np.all(new_state.block2 == 0) and np.all(new_state.block3 == 0))):
+            seed = 1
+            rng, np_seed = seeding.np_random(seed)
+            new_state._woodoku_env._np_random = rng
+            new_state._woodoku_env._np_random_seed = np_seed
+            # new_state._woodoku_env.seed(seed)
+
         # Turn off rendering
         render_mode = new_state._woodoku_env.render_mode
         new_state._woodoku_env.render_mode = None
