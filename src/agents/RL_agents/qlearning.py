@@ -4,6 +4,8 @@ from tqdm import tqdm
 
 from src import util
 from src.RLgame import RLgameState, RLAgent
+from src.agents.RL_agents.featureExtractor import EstimationExtractor
+from src.agents.RL_agents.featureExtractor import SmartExtractor
 import random
 
 
@@ -62,12 +64,13 @@ class QLearningAgent(RLAgent):
                 self.update(state, action, next_state, reward)
                 step += 1
                 state = next_state
+            if self.epsilon > 0.3:
+                self.epsilon -= 0.0001
 
             # print(f'Episode {episode}, Reward {run_reward}, Score {state.score}')
             rewards.append(run_reward)
-
-        if logger:
-            logger["rewards"].extend(rewards)
+            if logger:
+                logger["rewards"].append(run_reward)
 
         self.set_trained()
         return rewards
@@ -81,7 +84,7 @@ class ApproximateQAgent(QLearningAgent):
      and update.  All other QLearningAgent functions
      should work as is.
   """
-  def __init__(self, extractor='SmartExtractor', **args):
+  def __init__(self, extractor='EstimationExtractor', **args):
     super().__init__(**args)
     self.featExtractor = util.lookup(extractor, globals())()
 
