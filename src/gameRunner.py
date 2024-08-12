@@ -53,9 +53,6 @@ class GameRunner(object):
         # Turn on rendering
         self._woodoku_env.render_mode = self.render_mode
 
-        if self.logger:
-            self.logger["rewards"].extend(rewards)
-
     def _log_videos(self):
         # all video files are stored in the video_folder named: {agent_type}*
         video_folder = "./video_folder"
