@@ -20,11 +20,10 @@ class MultiAgentSearchAgent(Agent):
     only partially specified, and designed to be extended.  Agent (game.py)
     is another abstract class.
     """
-    def __init__(self, evaluation_function='evaluation_function_4', depth=1):
+    def __init__(self, evaluation_function='evaluation_function_6', depth=1):
         super().__init__()
         self.evaluation_function = util.lookup(evaluation_function, globals())
         self.depth = depth
-
 
     @abc.abstractmethod
     def get_action(self, game_state):
@@ -51,11 +50,11 @@ class MinmaxAgent(MultiAgentSearchAgent):
         """
         """*** YOUR CODE HERE ***"""
 
-        legal_moves = game_state.get_legal_actions()
+        legal_moves = game_state.get_legal_actions(agent_index=0)
         # we are starting with the max player and we want to maximize the score of the game ,after that we will
         # minimize the score of the game for the opponent player and so on.
         # this is the first move of the max player
-        best_move = max(tqdm(legal_moves), key=lambda x: self.minimax(game_state.generate_successor(x), 0, 1))
+        best_move = max(tqdm(legal_moves), key=lambda x: self.minimax(game_state.generate_successor(x, agent_index=0), 0, 1))
         return best_move
 
     def minimax(self, state, depth, agent_index):
@@ -63,11 +62,18 @@ class MinmaxAgent(MultiAgentSearchAgent):
             return self.evaluation_function(state)
 
         if agent_index == 0:  # Our agent
-            return max(self.minimax(state.generate_successor(action), depth + 1, 1)
-                       for action in state.get_legal_actions())
+            max_value = float('-inf')
+            for action in state.get_legal_actions(agent_index=agent_index):
+                value = self.minimax(state.generate_successor(action, agent_index=agent_index), depth + 1, 1)
+                max_value = max(max_value, value)
+            return max_value
+
         else:  # Opponent
-            return min(self.minimax(state.generate_successor(action), depth + 1, 0)
-                       for action in state.get_legal_actions())
+            min_value = float('inf')
+            for action in state.get_legal_actions(agent_index=agent_index):
+                value = self.minimax(state.generate_successor(action, agent_index=agent_index), depth + 1, 0)
+                min_value = min(min_value, value)
+            return min_value
 
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
@@ -82,22 +88,22 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """ YOUR CODE HERE """
 
         def max_value(game_state, depth, alpha, beta):
-            if depth == 0 or game_state.is_terminated():
+            if depth == 0 or game_state.done:
                 return self.evaluation_function(game_state)
             v = float('-inf')
-            for action in game_state.get_legal_actions():
-                v = max(v, min_value(game_state.generate_successor(action), depth, alpha, beta))
+            for action in game_state.get_legal_actions(agent_index=0):
+                v = max(v, min_value(game_state.generate_successor(action, agent_index=0), depth - 1, alpha, beta))
                 if v >= beta:
                     return v
                 alpha = max(alpha, v)
             return v
 
         def min_value(game_state, depth, alpha, beta):
-            if depth == 0 or game_state.is_terminated():
+            if depth == 0 or game_state.done:
                 return self.evaluation_function(game_state)
             v = float('inf')
-            for action in game_state.get_legal_actions():
-                v = min(v, max_value(game_state.generate_successor(action), depth - 1, alpha, beta))
+            for action in game_state.get_legal_actions(agent_index=1):
+                v = min(v, max_value(game_state.generate_successor(action, agent_index=1), depth - 1, alpha, beta))
                 if v <= alpha:
                     return v
                 beta = min(beta, v)
@@ -107,8 +113,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         best_score = float('-inf')
         alpha = float('-inf')
         beta = float('inf')
-        for action in tqdm(game_state.get_legal_actions()):
-            score = min_value(game_state.generate_successor(action), self.depth, alpha, beta)
+        for action in game_state.get_legal_actions(agent_index=0):
+            score = min_value(game_state.generate_successor(action, agent_index=0), self.depth, alpha, beta)
             if score > best_score:
                 best_score = score
                 best_action = action
@@ -125,8 +131,8 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         """*** YOUR CODE HERE ***"""
-        legal_moves = game_state.get_legal_actions()
-        best_move = max(tqdm(legal_moves), key=lambda x: self.expectimax(game_state.generate_successor(x), 0, 1))
+        legal_moves = game_state.get_legal_actions(agent_index=0)
+        best_move = max(tqdm(legal_moves), key=lambda x: self.expectimax(game_state.generate_successor(x, agent_index=0), 0, 1))
         return best_move
 
 
@@ -135,9 +141,9 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             return self.evaluation_function(state)
 
         if agent_index == 0:  # Our agent
-            return max(self.expectimax(state.generate_successor(action), depth + 1, 1)
-                       for action in state.get_legal_actions())
+            return max(self.expectimax(state.generate_successor(action, agent_index=agent_index), depth + 1, 1)
+                       for action in state.get_legal_actions(agent_index=agent_index))
         else:  # Opponent
-            legal_actions = state.get_legal_actions()
-            return sum(self.expectimax(state.generate_successor(action), depth + 1, 0) for action in
+            legal_actions = state.get_legal_actions(agent_index=agent_index)
+            return sum(self.expectimax(state.generate_successor(action, agent_index=agent_index), depth + 1, 0) for action in
                        legal_actions) / len(legal_actions)

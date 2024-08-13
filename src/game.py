@@ -3,6 +3,9 @@ from gymnasium import Env
 from src.util import raiseNotDefined
 import copy
 from gymnasium.utils import seeding
+from gym_woodoku.envs.blocks import blocks
+
+game_block = blocks["woodoku"]
 
 class GameState:
     def __init__(self, env: Env, observation, info):
@@ -114,8 +117,29 @@ class GameState:
     def observation_space(self):
         return self._woodoku_env.observation_space
 
-    def get_legal_actions(self):
-        return self.legal_action
+    def get_legal_actions(self, agent_index=0):
+        if agent_index == 0:
+            return self.legal_action
+
+        else:
+            return self.get_opponent_legal_actions()
+
+    def get_opponent_legal_actions(self):
+        """
+        Get legal actions for the opponent.
+        its empty action for when there is more than 1 block in the game
+        else it returns all the triplets (3) of all possible blocks meaning: [(0-46), (0-46), (0-46)]
+        :return:
+        """
+        blocks_range = len(game_block)
+
+        # check if all 3 of the blocks are full
+        if (not np.all(self.block1 == 0)) and (not np.all(self.block2 == 0)) and (not np.all(self.block3 == 0)):
+            return [(i, j, k) for i in range(blocks_range) for j in range(blocks_range) for k in range(blocks_range)] # TODO: reduce some states
+
+        else:
+            return [(-1, -1, -1)]
+
 
     def apply_action(self, action):
         observation, reward, terminated, _, info = self._env.step(action)
@@ -127,7 +151,41 @@ class GameState:
         self._score = info["score"]
         return self, reward, terminated, info
 
-    def generate_successor(self, action):
+    def apply_opponent_action(self, action):
+        """
+        Apply opponent action
+        :param action: either a triplet (3) of (0-46, 0-46, 0-46)
+        or empty action for when there is more than 1 block in the game (-1, -1, -1)
+        :return:
+        """
+        if action == (-1, -1, -1):
+            return
+
+        block1 = game_block[action[0]]
+        block2 = game_block[action[1]]
+        block3 = game_block[action[2]]
+
+        # our env.step
+        def opponent_step(self, block1, block2, block3):
+            self._block_1 = block1
+            self._block_2 = block2
+            self._block_3 = block3
+            self._get_legal_actions()
+            observation = self._get_obs()
+            info = self._get_info()
+            terminated = self._is_terminated()
+            return observation, 0, terminated, False, info
+
+        observation, reward, terminated, _, info = opponent_step(self._woodoku_env, block1, block2, block3)
+        self._cur_observation = observation
+        self.terminated = terminated
+        self._combo = info["combo"]
+        self._straight = info["straight"]
+        self.legal_action = [i for i in range(len(info["action_mask"])) if info["action_mask"][i] == 1]
+        self._score = info["score"]
+        return self, reward, terminated, info
+
+    def generate_successor(self, action, agent_index=0):
         new_state = copy.deepcopy(self)
 
         # check if 2 of the blocks are 0
@@ -145,7 +203,12 @@ class GameState:
         new_state._woodoku_env.render_mode = None
 
         # Apply action
-        new_state.apply_action(action)
+        if agent_index == 0:
+            new_state.apply_action(action)
+
+        else:
+            new_state.apply_opponent_action(action)
+
 
         # Turn on rendering
         new_state._woodoku_env.render_mode = render_mode
