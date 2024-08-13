@@ -132,7 +132,6 @@ class GameState:
         :return:
         """
         blocks_range = len(game_block)
-
         # check if all 3 of the blocks are full
         if (not np.all(self.block1 == 0)) and (not np.all(self.block2 == 0)) and (not np.all(self.block3 == 0)):
             return [(i, j, k) for i in range(blocks_range) for j in range(blocks_range) for k in range(blocks_range)] # TODO: reduce some states
@@ -166,17 +165,29 @@ class GameState:
         block3 = game_block[action[2]]
 
         # our env.step
-        def opponent_step(self, block1, block2, block3):
-            self._block_1 = block1
-            self._block_2 = block2
-            self._block_3 = block3
-            self._get_legal_actions()
-            observation = self._get_obs()
-            info = self._get_info()
-            terminated = self._is_terminated()
+        def opponent_step(env, action, block1, block2, block3):
+            env._block_1 = block1
+            env._block_2 = block2
+            env._block_3 = block3
+            env._block_valid_pos = []
+
+            def update_block_pos(env, action):
+                for i in range(3):
+                    valid_list = []
+                    for r in range(5):
+                        for c in range(5):
+                            if env._block_list[action[i]][r][c] == 1:
+                                valid_list.append((r, c))
+                    env._block_valid_pos.append(valid_list)
+
+            update_block_pos(env, action)
+            env._get_legal_actions()
+            observation = env._get_obs()
+            info = env._get_info()
+            terminated = env._is_terminated()
             return observation, 0, terminated, False, info
 
-        observation, reward, terminated, _, info = opponent_step(self._woodoku_env, block1, block2, block3)
+        observation, reward, terminated, _, info = opponent_step(self._woodoku_env, action, block1, block2, block3)
         self._cur_observation = observation
         self.terminated = terminated
         self._combo = info["combo"]

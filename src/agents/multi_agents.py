@@ -20,7 +20,7 @@ class MultiAgentSearchAgent(Agent):
     only partially specified, and designed to be extended.  Agent (game.py)
     is another abstract class.
     """
-    def __init__(self, evaluation_function='evaluation_function_6', depth=1):
+    def __init__(self, evaluation_function='evaluation_function_4', depth=2):
         super().__init__()
         self.evaluation_function = util.lookup(evaluation_function, globals())
         self.depth = depth
@@ -141,9 +141,18 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             return self.evaluation_function(state)
 
         if agent_index == 0:  # Our agent
-            return max(self.expectimax(state.generate_successor(action, agent_index=agent_index), depth + 1, 1)
-                       for action in state.get_legal_actions(agent_index=agent_index))
+            v = float('-inf')
+            for action in state.get_legal_actions(agent_index=agent_index):
+                curr_v = self.expectimax(state.generate_successor(action, agent_index=agent_index), depth + 1, 1)
+                if curr_v > v:
+                    v = curr_v
+            return v
+
         else:  # Opponent
             legal_actions = state.get_legal_actions(agent_index=agent_index)
-            return sum(self.expectimax(state.generate_successor(action, agent_index=agent_index), depth + 1, 0) for action in
-                       legal_actions) / len(legal_actions)
+            v_sum = 0
+            for action in tqdm(legal_actions):
+                next_state = state.generate_successor(action, agent_index=agent_index)
+                v_sum += self.expectimax(next_state, depth + 1, 0)
+            return v_sum / len(legal_actions)
+
