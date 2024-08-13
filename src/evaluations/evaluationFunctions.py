@@ -4,6 +4,21 @@ from tqdm import tqdm
 from src.game import GameState
 import cv2
 
+
+def check_score(current_game_state, action):
+    """
+    This function returns the score given by the game after applying the given action
+    on the given state.
+
+    :param board: the board
+    :param x: occupied block x coordinate
+    :param y: occupied block y coordinate
+    :return:  the number of occupied blocks around the given block
+    """
+    successor_game_state = current_game_state.generate_successor(action=action)
+    return successor_game_state.score
+
+
 def occupied_neighbours(board, x: int, y: int):
     """
     This function counts the number of occupied blocks around a given block on the board.
@@ -94,7 +109,22 @@ def is_component_convex(component):
     return cv2.isContourConvex(contours[0])
 
 
-def evaluation_function_4( current_game_state, action):
+def remaining_possible_moves(current_game_state, action):
+    """
+    This evaluation function estimates the number of possible legal actions remaining
+    after applying the given action on the given state.
+
+    :param current_game_state: the current game state
+    :param action: the action to evaluate
+    :return: estimation of the number of possible legal moves after taking said action
+    """
+
+    successor_game_state = current_game_state.generate_successor(action=action)
+    num_legal_moves = len(successor_game_state.get_legal_actions())
+    return num_legal_moves
+
+
+def connected_components(current_game_state, action):
     """
     This evaluation function considers both the number and shape of connected components
     on the board after a move. It aims to minimize the number of components and prefers
@@ -142,6 +172,18 @@ def evaluation_function_4( current_game_state, action):
 
     return score
 
+
 def best_evaluation(current_game_state, action):
-    return evaluation_function_4(current_game_state, action) + square_contribution(current_game_state, action) ** 2
+    """
+    This evaluation function is an expression made up of various evaluation functions.
+    The function gives the best average score for a ReflexAgent
+
+    :param current_game_state: the current game state
+    :param action: the action to evaluate
+    :return: the score of the action
+
+    .. seealso:: :class:`ReflexAgent`
+    For more details, see the ReflexAgent class.
+    """
+    return connected_components(current_game_state, action) + square_contribution(current_game_state, action) ** 2
 
