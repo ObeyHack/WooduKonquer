@@ -14,47 +14,6 @@ class RLgameState(GameState):
         new_state = deepcopy(self)
         return new_state.apply_action(action)
 
-    @staticmethod
-    def reward_for_clearing_board(board, previous_board, done, truncated):
-        reward = 0
-
-        # Reward for clearing rows, columns, or 3x3 grids
-        cleared_cells = np.sum(previous_board) - np.sum(board)
-        return cleared_cells * 10  # higher reward for more cleared cells
-
-    @staticmethod
-    def calculate_reward(board, previous_board, done, truncated):
-        reward = 0
-
-        # Reward for clearing rows, columns, or 3x3 grids
-        cleared_cells = np.sum(previous_board) - np.sum(board)
-        reward += cleared_cells * 10  # higher reward for more cleared cells
-
-        # Bonus for clearing multiple rows/columns/grids
-        reward += (cleared_cells // 9) * 50  # additional bonus for clearing entire rows/columns
-
-        # Small positive reward for a valid move
-        reward += 1
-
-        # Penalty for near game over (few empty cells)
-        empty_cells = np.sum(board == 0)
-        if empty_cells < 10:
-            reward -= 10 * (10 - empty_cells)  # larger penalty as the board fills up
-
-        # Penalty for isolated blocks (empty cells surrounded by filled cells)
-        isolated_blocks = 0
-        for row in range(1, 8):
-            for col in range(1, 8):
-                if board[row, col] == 0 and board[row - 1, col] == 1 and board[row + 1, col] == 1 and board[
-                    row, col - 1] == 1 and board[row, col + 1] == 1:
-                    isolated_blocks += 1
-        reward -= isolated_blocks * 20  # penalty for isolated empty cells
-
-        # Bonus for larger contiguous open spaces
-        reward += np.max([len(list(g)) for k, g in groupby(np.nditer(board.flatten())) if k == 0])
-
-        return reward
-
 
 class RLAgent(Agent):
     def __init__(self, alpha=0.5, epsilon=0.1, gamma=0.8, num_episodes=10000):
@@ -65,6 +24,7 @@ class RLAgent(Agent):
         gamma    - discount factor
         numTraining - number of training episodes, i.e. no learning after these many episodes
         """
+        super().__init__()
         self.alpha = float(alpha)
         self.epsilon = float(epsilon)
         self.discount = float(gamma)
