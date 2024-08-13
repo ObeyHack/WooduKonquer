@@ -3,45 +3,27 @@ from src.game import GameState
 import cv2
 
 
-
 def base_evaluation_function(current_game_state, action):
     return current_game_state.score
 
-def evaluation_function(current_game_state, action):
-    """
-    Design a better evaluation function here.
-
-    The evaluation function takes in the current and proposed successor
-    GameStates (GameState.py) and returns a number, where higher numbers are better.
-
-    """
-    # Useful information you can extract from a GameState (game_state.py)
-    successor_game_state = current_game_state.generate_successor(action=action)
-    block_1 = successor_game_state.block1
-    block_2 = successor_game_state.block2
-    block_3 = successor_game_state.block3
-    board = successor_game_state.board
-    score = successor_game_state.score
-    moved_block, x, y = action // 81, (action % 81) // 9, (action % 81) % 9
-
-    "*** YOUR CODE HERE ***"
-    square_center = ((x // 3) * 3 + 1, (y // 3) * 3 + 1)
-
-    square_count = 0
-    for i in range(-1, 2):
-        for j in range(-1, 2):
-            square_count += board[square_center[0] + i, square_center[1] + j]
-
-    successor_empty_tiles = np.sum(board == 0)
-
-    # number of legal moves in the successor state
-    num_legal_moves_successor = len(successor_game_state.get_legal_actions())
-
-    return score + 1000 * num_legal_moves_successor + square_count ** 2 + 10 * successor_empty_tiles + avoid_jagged_edges(
-        current_game_state, action)
-
 
 def occupied_neighbours(board, x: int, y: int):
+    """Gets a board and a coordinate on it and returns the number of occupied neighbours around the coordinate
+
+    Parameters
+    ----------
+    board : ?
+        A state of a regular woodoku board
+    x : int
+        The x value of the coordinate
+    y : int
+        The y value of the coordinate
+
+    Returns
+    -------
+    int
+        The number of occupied blocks around the given coordinate on the given board.
+    """
     occupied_blocks_count = 0
     for k in range(-1, 2):
         for l in range(-1, 2):
@@ -53,6 +35,22 @@ def occupied_neighbours(board, x: int, y: int):
 
 
 def avoid_jagged_edges(current_game_state : GameState, action : int):
+    """Given a woodoku game state and an action, measures the number of pointy edges created after applying the action
+
+    Parameters
+    ----------
+    current_game_state :
+        A state of a regular woodoku board
+    x : int
+        The x value of the coordinate
+    y : int
+        The y value of the coordinate
+
+    Returns
+    -------
+    int
+        The number of occupied blocks around the given coordinate on the given board.
+    """
     successor_game_state = current_game_state.generate_successor(action=action)
     block_1 = successor_game_state.block1
     block_2 = successor_game_state.block2
@@ -67,7 +65,7 @@ def avoid_jagged_edges(current_game_state : GameState, action : int):
         for j in range(len(successor_board[i])):
             if occupied_neighbours(successor_board, i, j) == 8:
                 jagged_edges += 1
-    return - jagged_edges * 3
+    return - jagged_edges
     # counting all trapped blocks
 
 
@@ -87,7 +85,6 @@ def matching_blocks(current_game_state : GameState, action: int):
     blocks = [block_1, block_2, block_3]
 
 
-
 def is_component_convex(component):
     """
     Check if the given component (a binary numpy array) is convex.
@@ -102,6 +99,7 @@ def is_component_convex(component):
     # Check if the largest contour is convex
     return cv2.isContourConvex(contours[0])
 
+
 def board_density(board):
     """
     Calculate the density of filled blocks on the board.
@@ -110,6 +108,7 @@ def board_density(board):
     total_blocks = board.size
     filled_blocks = np.sum(board)
     return filled_blocks / total_blocks
+
 
 def evaluation_function_3(current_game_state, action):
     """
@@ -166,6 +165,7 @@ def evaluation_function_3(current_game_state, action):
 
     return score
 
+
 def evaluation_function_4(current_game_state, action):
     """
     This evaluation function considers both the number and shape of connected components
@@ -213,6 +213,7 @@ def evaluation_function_4(current_game_state, action):
 
     return score
 
+
 def evaluation_function_5(current_game_state, action):
     #just legal actions and combos
     successor_game_state = current_game_state.generate_successor(action=action)
@@ -227,3 +228,24 @@ def evaluation_function_5(current_game_state, action):
     combo = successor_game_state.combo
     stright = successor_game_state.straight
     return num_legal_moves_successor + combo*15 + stright*15
+
+
+def square_contribution(current_game_state, action):
+    successor_game_state = current_game_state.generate_successor(action=action)
+    block_1 = successor_game_state.block1
+    block_2 = successor_game_state.block2
+    block_3 = successor_game_state.block3
+    moved_block, x, y = action // 81, (action % 81) // 9, (action % 81) % 9
+    square_center = ((x // 3) * 3 + 1, (y // 3) * 3 + 1)
+    board = successor_game_state.board
+
+    square_count = 0
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            square_count += board[square_center[0] + i, square_center[1] + j]
+
+    return square_count
+
+
+def best_evaluation(current_game_state, action):
+    return evaluation_function_4(current_game_state, action) + square_contribution(current_game_state, action) ** 2
