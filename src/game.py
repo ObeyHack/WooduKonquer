@@ -138,7 +138,7 @@ class GameState:
         # check if all 3 of the blocks are full
         if (not np.all(self.block1 == 0)) and (not np.all(self.block2 == 0)) and (not np.all(self.block3 == 0)):
             # randomly choose 50 elements from the block_space
-            return random.choices(block_space, k=5)
+            return [block_space[10], block_space[250], block_space[3000]]
 
 
         else:
@@ -208,7 +208,7 @@ class GameState:
         if ((np.all(new_state.block1 == 0) and np.all(new_state.block2 == 0)) or (
                 np.all(new_state.block1 == 0) and np.all(new_state.block3 == 0)) or (
                 np.all(new_state.block2 == 0) and np.all(new_state.block3 == 0))):
-            seed = 1
+            seed = hash(new_state) % 2 ** 32
             rng, np_seed = seeding.np_random(seed)
             new_state._woodoku_env._np_random = rng
             new_state._woodoku_env._np_random_seed = np_seed

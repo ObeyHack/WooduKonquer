@@ -24,7 +24,7 @@ class ReflexAgent(Agent):
     it in any way you see fit, so long as you don't touch our method
     headers.
     """
-    def __init__(self, evaluation_function='base_evaluation_function'):
+    def __init__(self, evaluation_function='best_evaluation'):
         self.evaluation_function = util.lookup(evaluation_function, globals())
         super().__init__()
 
