@@ -5,7 +5,7 @@ from src.game import GameState
 import cv2
 
 
-def score_evaluation_function(current_game_state):
+def score_function(current_game_state):
     """
     This function returns the score given by the game in the current state
 
@@ -17,7 +17,7 @@ def score_evaluation_function(current_game_state):
     return current_game_state.score
 
 
-def num_action_evaluation_function(current_game_state):
+def remaining_possible_moves(current_game_state):
     """
     This function returns the number of available legal actions in the current state
 
@@ -29,25 +29,6 @@ def num_action_evaluation_function(current_game_state):
     return len(current_game_state.get_legal_actions())
 
 
-def is_component_convex(component):
-    """
-    Check if the given component (a binary numpy array) is convex.
-    The component is assumed to be a binary mask (1s and 0s).
-
-
-    :param component: the component to check convex for
-    :return: True if the component is convex, False otherwise
-    """
-    # Find contours in the component
-    contours, _ = cv2.findContours(component, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-    if len(contours) == 0:
-        return True  # No contours, trivially convex
-
-    # Check if the largest contour is convex
-    return cv2.isContourConvex(contours[0])
-
-
 def connected_components(current_game_state):
     """
     This evaluation function considers both the number and shape of connected components
@@ -57,6 +38,24 @@ def connected_components(current_game_state):
     :param current_game_state: the current game state
     :return: A measure for the quality of the current game state based on connected components
     """
+
+    def is_component_convex(component):
+        """
+        Check if the given component (a binary numpy array) is convex.
+        The component is assumed to be a binary mask (1s and 0s).
+
+
+        :param component: the component to check convex for
+        :return: True if the component is convex, False otherwise
+        """
+        # Find contours in the component
+        contours, _ = cv2.findContours(component, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        if len(contours) == 0:
+            return True  # No contours, trivially convex
+
+        # Check if the largest contour is convex
+        return cv2.isContourConvex(contours[0])
 
     # Extract the board from the successor game state
     board = current_game_state.board
@@ -86,13 +85,6 @@ def connected_components(current_game_state):
     block_1 = current_game_state.block1
     block_2 = current_game_state.block2
     block_3 = current_game_state.block3
-    num_legal_moves = len(current_game_state.get_legal_actions())
-
-    # Factor in the number of legal moves in the successor state
-
-    # Weight the legal moves positively to keep options open
-    score += 15 * num_legal_moves
-
     return score
 
 
@@ -146,4 +138,5 @@ def best_evaluation(current_game_state):
     :param current_game_state: the current game state
     :return: the number of 3x3 empty crushable squares on the board
     """
-    return connected_components(current_game_state) + square_contribution(current_game_state)**2
+    return (15 * remaining_possible_moves(current_game_state) +
+            connected_components(current_game_state) + square_contribution(current_game_state)**2)

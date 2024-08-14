@@ -75,7 +75,6 @@ def square_contribution(current_game_state, action):
 
 
 
-
 def best_evaluation(current_game_state, action):
     """
     This evaluation function is an expression made up of various evaluation functions.
