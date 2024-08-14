@@ -130,13 +130,77 @@ def square_contribution(current_game_state):
     return max_square_occupied_bricks
 
 
-def best_evaluation_multi(current_game_state):
+def avoid_jagged_edges_diag(current_game_state):
     """
-    This evaluation function gets a game state and returns a combination of the functions connected_components
-    and num_empty_squares
+    This evaluation function aims to minimize the number of jagged edges on the board
+    after a move. A jagged edge is defined as a cell that is surrounded by 8 occupied
+    cells.
 
-    :param current_game_state: the current game state
-    :return: the number of 3x3 empty crushable squares on the board
+    :param current_game_state: the state
+    :param action:
+    :return: the of jagged edges on the board after the move
     """
-    return (15 * remaining_possible_moves(current_game_state) +
-            connected_components(current_game_state) + square_contribution(current_game_state)**2)
+
+    def check_for_jagged(board, x: int, y: int):
+        if board[x, y] == board[x + 1, y + 1] and board[x + 1, y] == board[x, y + 1] and board[x, y] != board[x + 1, y]:
+            return 1
+        return 0
+
+    successor_game_state = current_game_state
+    block_1 = successor_game_state.block1
+    block_2 = successor_game_state.block2
+    block_3 = successor_game_state.block3
+    blocks = [block_1, block_2, block_3]
+    successor_board = successor_game_state.board
+    successor_score = successor_game_state.score
+    jagged_edges = 0
+    for i in range(len(successor_board) - 1):
+        for j in range(len(successor_board[i]) - 1):
+            jagged_edges += check_for_jagged(successor_board, i, j)
+    return - jagged_edges
+    # counting all trapped blocks
+
+
+def avoid_jagged_edges(current_game_state : GameState):
+    """
+    This evaluation function aims to minimize the number of jagged edges on the board
+    after a move. A jagged edge is defined as a cell that is surrounded by 8 occupied
+    cells.
+
+    :param current_game_state: the state
+    :param action:
+    :return: the of jagged edges on the board after the move
+    """
+
+    def occupied_neighbours(board, x: int, y: int):
+        """
+        This function counts the number of occupied blocks around a given block on the board.
+        This is a helper fcuntion for avoid jagged edges
+
+        :param board: the board
+        :param x: occupied block x coordinate
+        :param y: occupied block y coordinate
+        :return:  the number of occupied blocks around the given block
+        """
+        occupied_blocks_count = 0
+        for k in range(-1, 2):
+            for l in range(-1, 2):
+                if x + k < 0 or x + k > (len(board) - 1) or y + l < 0 or y + l > (len(board[0]) - 1):
+                    occupied_blocks_count += 1
+                if k != 0 or l != 0:
+                    occupied_blocks_count += board[x + k][y + l]
+        return occupied_blocks_count
+
+    successor_game_state = current_game_state
+    block_1 = successor_game_state.block1
+    block_2 = successor_game_state.block2
+    block_3 = successor_game_state.block3
+    blocks = [block_1, block_2, block_3]
+    successor_board = successor_game_state.board
+    successor_score = successor_game_state.score
+    jagged_edges = 0
+    for i in range(len(successor_board)):
+        for j in range(len(successor_board[i])):
+            if occupied_neighbours(successor_board, i, j) == 8:
+                jagged_edges += 1
+    return jagged_edges

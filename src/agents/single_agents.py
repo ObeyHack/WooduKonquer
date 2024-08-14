@@ -1,7 +1,7 @@
 from random import random
 
 from src import util
-from src.evaluations.evaluationFunctions import *
+from src.evaluations.evaluationFunctions import best_evaluation
 import numpy as np
 from tqdm import tqdm
 from src.game import Agent
