@@ -43,8 +43,6 @@ def avoid_jagged_edges(current_game_state : GameState, action : int):
     successor_board = successor_game_state.board
     successor_score = successor_game_state.score
     jagged_edges = 0
-
-    moved_block, x, y = blocks[action // 81], (action % 81) // 9, (action % 81) % 9
     for i in range(len(successor_board)):
         for j in range(len(successor_board[i])):
             if occupied_neighbours(successor_board, i, j) == 8:
