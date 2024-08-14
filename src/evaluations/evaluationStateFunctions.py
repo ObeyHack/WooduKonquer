@@ -64,7 +64,7 @@ def connected_components(current_game_state):
     inverted_board = 1 - board
 
     # Apply connected components labeling to find isolated empty regions
-    num_labels, labels = cv2.connectedComponents(inverted_board, connectivity=8)
+    num_labels, labels = cv2.connectedComponents(inverted_board, connectivity=4)
 
     # Initialize the score
     score = 0
@@ -81,10 +81,6 @@ def connected_components(current_game_state):
             score += convex_reward  # Reward for convex shape
         else:
             score += non_convex_penalty  # Penalize for non-convex shape
-
-    block_1 = current_game_state.block1
-    block_2 = current_game_state.block2
-    block_3 = current_game_state.block3
     return score
 
 
@@ -97,17 +93,12 @@ def num_empty_squares(current_game_state):
     :return: the number of 3x3 empty crushable squares on the board
     """
     board = current_game_state.board
-    square_count = 0
-    for i in range(3):
-        for j in range(3):
-            square_center = (i * 3 + 1, j * 3 + 1)
-            square_occupied_bricks = 0
-            for i in range(-1, 2):
-                for j in range(-1, 2):
-                    square_occupied_bricks += board[square_center[0] + i, square_center[1] + j]
-            if square_occupied_bricks == 0:
-                square_count += 1
-    return square_count
+    conv = np.ones(shape=(3, 3))
+    res = np.zeros(shape=(8, 8))
+    for i in range(1, len(board) - 1):
+        for j in range(1, len(board[0]) - 1):
+            res[i - 1][j - 1] = np.sum(board[i - 1: i + 2, j - 1: j + 2])
+    return len(res[res == 0])
 
 
 def square_contribution(current_game_state):
@@ -123,11 +114,31 @@ def square_contribution(current_game_state):
         for j in range(3):
             square_center = (i * 3 + 1, j * 3 + 1)
             square_occupied_bricks = 0
-            for i in range(-1, 2):
-                for j in range(-1, 2):
-                    square_occupied_bricks += board[square_center[0] + i, square_center[1] + j]
+            for k in range(-1, 2):
+                for l in range(-1, 2):
+                    square_occupied_bricks += board[square_center[0] + k, square_center[1] + l]
             max_square_occupied_bricks = max(max_square_occupied_bricks, square_occupied_bricks)
     return max_square_occupied_bricks
+
+
+def row_contribution(current_game_state):
+    board = current_game_state.board
+    max_row = 0
+    max_bricks_in_row = 0
+    for i in range(len(board)):
+        bricks_in_row = np.count_nonzero(board[i, :])
+        max_bricks_in_row = max(bricks_in_row, max_bricks_in_row)
+    return max_bricks_in_row
+
+
+def column_contribution(current_game_state):
+    board = current_game_state.board
+    max_row = 0
+    max_bricks_in_col = 0
+    for i in range(len(board[0])):
+        bricks_in_col = np.count_nonzero(board[:, i])
+        max_bricks_in_col = max(bricks_in_col, max_bricks_in_col)
+    return max_bricks_in_col
 
 
 def avoid_jagged_edges_diag(current_game_state):

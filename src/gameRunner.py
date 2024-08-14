@@ -55,6 +55,8 @@ class GameRunner(object):
 
     def _log_videos(self):
         # all video files are stored in the video_folder named: {agent_type}*
+        if not self.env.render_mode == "rgb_array":
+            return
         video_folder = "./video_folder"
         for file in os.listdir(video_folder):
             if file.startswith(self.agent_type):
