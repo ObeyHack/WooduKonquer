@@ -9,8 +9,10 @@ def best_evaluation_multi(current_game_state):
     :param current_game_state: the current game state
     :return: the number of 3x3 empty crushable squares on the board
     """
-    return (15 * remaining_possible_moves(current_game_state) +
-            connected_components(current_game_state) + square_contribution(current_game_state)**2)
+    score = (15 * remaining_possible_moves(current_game_state) +
+            connected_components(current_game_state) + square_contribution(current_game_state)**2) \
+           - avoid_jagged_edges(current_game_state) * 4
+    return score
 
 
 def best_evaluation(current_game_state, action):
@@ -26,6 +28,5 @@ def best_evaluation(current_game_state, action):
     For more details, see the ReflexAgent class.
     """
     successor = current_game_state.generate_successor(action=action)
-    return (connected_components(successor) + 15 * remaining_possible_moves(successor) +
-            square_contribution(successor) ** 2)
+    return best_evaluation_multi(successor)
 

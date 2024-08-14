@@ -157,7 +157,7 @@ def avoid_jagged_edges_diag(current_game_state):
     for i in range(len(successor_board) - 1):
         for j in range(len(successor_board[i]) - 1):
             jagged_edges += check_for_jagged(successor_board, i, j)
-    return - jagged_edges
+    return jagged_edges
     # counting all trapped blocks
 
 
@@ -187,7 +187,7 @@ def avoid_jagged_edges(current_game_state : GameState):
             for l in range(-1, 2):
                 if x + k < 0 or x + k > (len(board) - 1) or y + l < 0 or y + l > (len(board[0]) - 1):
                     occupied_blocks_count += 1
-                if k != 0 or l != 0:
+                elif k != 0 or l != 0:
                     occupied_blocks_count += board[x + k][y + l]
         return occupied_blocks_count
 
