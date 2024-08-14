@@ -59,7 +59,9 @@ class GameState:
     def __deepcopy__(self, memo):
         from copy import deepcopy
         env2 = deepcopy(self._env)
-        action_mask = [1 if i in self.legal_action else 0 for i in range(243)]
+        action_mask = [0] * 243
+        for i in self.legal_action:
+            action_mask[i] = 1
         info ={
             "action_mask": action_mask,
             "combo": self._combo,
