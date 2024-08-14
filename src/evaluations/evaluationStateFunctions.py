@@ -16,6 +16,17 @@ def score_evaluation_function(current_game_state):
     return current_game_state.score
 
 
+def num_action_evaluation_function(current_game_state):
+    """
+    This default evaluation function just returns the score of the state.
+    The score is the same one displayed in the GUI.
+
+    This evaluation function is meant for use with adversarial search agents
+    (not reflex agents).
+    """
+    return len(current_game_state.get_legal_actions())
+
+
 def is_component_convex(component):
     """
     Check if the given component (a binary numpy array) is convex.

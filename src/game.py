@@ -1,3 +1,4 @@
+import random
 import numpy as np
 from gymnasium import Env
 from src.util import raiseNotDefined
@@ -6,6 +7,9 @@ from gymnasium.utils import seeding
 from gym_woodoku.envs.blocks import blocks
 
 game_block = blocks["woodoku"]
+blocks_range = len(game_block)
+block_space = [(i, j, k) for i in range(blocks_range)
+                        for j in range(blocks_range) for k in range(blocks_range)] # TODO: reduce some states
 
 class GameState:
     def __init__(self, env: Env, observation, info):
@@ -131,10 +135,11 @@ class GameState:
         else it returns all the triplets (3) of all possible blocks meaning: [(0-46), (0-46), (0-46)]
         :return:
         """
-        blocks_range = len(game_block)
         # check if all 3 of the blocks are full
         if (not np.all(self.block1 == 0)) and (not np.all(self.block2 == 0)) and (not np.all(self.block3 == 0)):
-            return [(i, j, k) for i in range(blocks_range) for j in range(blocks_range) for k in range(blocks_range)] # TODO: reduce some states
+            # randomly choose 50 elements from the block_space
+            return random.choices(block_space, k=5)
+
 
         else:
             return [(-1, -1, -1)]

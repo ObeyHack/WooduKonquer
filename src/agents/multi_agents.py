@@ -20,7 +20,7 @@ class MultiAgentSearchAgent(Agent):
     only partially specified, and designed to be extended.  Agent (game.py)
     is another abstract class.
     """
-    def __init__(self, evaluation_function='evaluation_function_4', depth=2):
+    def __init__(self, evaluation_function='num_action_evaluation_function', depth=2):
         super().__init__()
         self.evaluation_function = util.lookup(evaluation_function, globals())
         self.depth = depth
@@ -88,7 +88,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """ YOUR CODE HERE """
 
         def max_value(game_state, depth, alpha, beta):
-            if depth == 0 or game_state.done:
+            if depth == 0 or game_state.is_terminated():
                 return self.evaluation_function(game_state)
             v = float('-inf')
             for action in game_state.get_legal_actions(agent_index=0):
@@ -99,7 +99,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             return v
 
         def min_value(game_state, depth, alpha, beta):
-            if depth == 0 or game_state.done:
+            if depth == 0 or game_state.is_terminated():
                 return self.evaluation_function(game_state)
             v = float('inf')
             for action in game_state.get_legal_actions(agent_index=1):
@@ -113,7 +113,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         best_score = float('-inf')
         alpha = float('-inf')
         beta = float('inf')
-        for action in game_state.get_legal_actions(agent_index=0):
+        for action in tqdm(game_state.get_legal_actions(agent_index=0)):
             score = min_value(game_state.generate_successor(action, agent_index=0), self.depth, alpha, beta)
             if score > best_score:
                 best_score = score
@@ -151,7 +151,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         else:  # Opponent
             legal_actions = state.get_legal_actions(agent_index=agent_index)
             v_sum = 0
-            for action in tqdm(legal_actions):
+            for action in legal_actions:
                 next_state = state.generate_successor(action, agent_index=agent_index)
                 v_sum += self.expectimax(next_state, depth + 1, 0)
             return v_sum / len(legal_actions)
