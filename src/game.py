@@ -8,8 +8,11 @@ from gym_woodoku.envs.blocks import blocks
 
 game_block = blocks["woodoku"]
 blocks_range = len(game_block)
-block_space = [(i, j, k) for i in range(blocks_range)
-                        for j in range(blocks_range) for k in range(blocks_range)] # TODO: reduce some states
+block_space = []
+for i in range(blocks_range):
+    for j in range(i+1, blocks_range):
+        for k in range(j+1, blocks_range):
+            block_space.append((i, j, k))
 
 class GameState:
     def __init__(self, env: Env, observation, info):
@@ -170,10 +173,6 @@ class GameState:
         if action == (-1, -1, -1):
             return
 
-        block1 = game_block[action[0]]
-        block2 = game_block[action[1]]
-        block3 = game_block[action[2]]
-
         # our env.step
         def opponent_step(env, action, block1, block2, block3):
             env._block_1 = block1
@@ -197,6 +196,10 @@ class GameState:
             terminated = env._is_terminated()
             return observation, 0, terminated, False, info
 
+        block1 = game_block[action[0]]
+        block2 = game_block[action[1]]
+        block3 = game_block[action[2]]
+
         observation, reward, terminated, _, info = opponent_step(self._woodoku_env, action, block1, block2, block3)
         self._cur_observation = observation
         self.terminated = terminated
@@ -213,7 +216,8 @@ class GameState:
         if ((np.all(new_state.block1 == 0) and np.all(new_state.block2 == 0)) or (
                 np.all(new_state.block1 == 0) and np.all(new_state.block3 == 0)) or (
                 np.all(new_state.block2 == 0) and np.all(new_state.block3 == 0))):
-            seed = hash(new_state) % 2 ** 32
+            # seed = 1     hash(new_state) % 2 ** 32
+            seed = 1
             rng, np_seed = seeding.np_random(seed)
             new_state._woodoku_env._np_random = rng
             new_state._woodoku_env._np_random_seed = np_seed
