@@ -59,8 +59,9 @@ class GameState:
     def __deepcopy__(self, memo):
         from copy import deepcopy
         env2 = deepcopy(self._env)
+        action_mask = [1 if i in self.legal_action else 0 for i in range(243)]
         info ={
-            "action_mask": self.legal_action,
+            "action_mask": action_mask,
             "combo": self._combo,
             "straight": self._straight,
             "score": self._score,
@@ -135,11 +136,11 @@ class GameState:
         else it returns all the triplets (3) of all possible blocks meaning: [(0-46), (0-46), (0-46)]
         :return:
         """
+
         # check if all 3 of the blocks are full
         if (not np.all(self.block1 == 0)) and (not np.all(self.block2 == 0)) and (not np.all(self.block3 == 0)):
             # randomly choose 50 elements from the block_space
-            return [block_space[10], block_space[250], block_space[3000]]
-
+            return random.sample(block_space, 50)
 
         else:
             return [(-1, -1, -1)]

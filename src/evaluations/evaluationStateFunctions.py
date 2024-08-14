@@ -5,52 +5,59 @@ from src.game import GameState
 import cv2
 
 
-def score_evaluation_function(current_game_state):
+def score_eval(game_state):
     """
-    This default evaluation function just returns the score of the state.
-    The score is the same one displayed in the GUI.
+    This evaluation function returns the score of the game state.
 
-    This evaluation function is meant for use with adversarial search agents
-    (not reflex agents).
+    :param game_state: the game state
+    :return: the score of the game state
     """
-    return current_game_state.score
+    return game_state.score
 
 
-def num_action_evaluation_function(current_game_state):
+def remaining_possible_moves(game_state):
     """
-    This default evaluation function just returns the score of the state.
-    The score is the same one displayed in the GUI.
+    This evaluation function estimates the number of possible legal actions remaining
+    after applying the given action on the given state.
 
-    This evaluation function is meant for use with adversarial search agents
-    (not reflex agents).
+    :param current_game_state: the current game state
+    :param action: the action to evaluate
+    :return: estimation of the number of possible legal moves after taking said action
     """
-    return len(current_game_state.get_legal_actions())
+    num_legal_moves = len(game_state.get_legal_actions())
+    return num_legal_moves
 
 
-def is_component_convex(component):
-    """
-    Check if the given component (a binary numpy array) is convex.
-    The component is assumed to be a binary mask (1s and 0s).
-    """
-    # Find contours in the component
-    contours, _ = cv2.findContours(component, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-    if len(contours) == 0:
-        return True  # No contours, trivially convex
-
-    # Check if the largest contour is convex
-    return cv2.isContourConvex(contours[0])
-
-
-def evaluation_function_4(current_game_state):
+def connected_components(game_state):
     """
     This evaluation function considers both the number and shape of connected components
     on the board after a move. It aims to minimize the number of components and prefers
     convex components.
+
+    :param current_game_state: the current game state
+    :param action: the action to evaluate
+    :return: the score of the action
     """
 
+    def is_component_convex(component):
+        """
+        Check if the given component (a binary numpy array) is convex.
+        The component is assumed to be a binary mask (1s and 0s).
+        """
+        # Find contours in the component
+        contours, _ = cv2.findContours(component, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        if len(contours) == 0:
+            return True  # No contours, trivially convex
+
+        # Check if the largest contour is convex
+        return cv2.isContourConvex(contours[0])
+
+    # Generate the successor game state based on the action taken
+    combo_number = game_state.combo
+    straight_number = game_state.straight
     # Extract the board from the successor game state
-    board = current_game_state.board
+    board = game_state.board
 
     # Invert the board to find empty space regions
     inverted_board = 1 - board
@@ -63,8 +70,8 @@ def evaluation_function_4(current_game_state):
 
     # Set weights for different factors
     component_penalty = -10  # Penalty per component
-    convex_reward = 10  # Reward for convex component
-    non_convex_penalty = -20 # Additional penalty for non-convex component
+    convex_reward = 5  # Reward for convex component
+    non_convex_penalty = -20  # Additional penalty for non-convex component
 
     for label in range(1, num_labels):
         component = (labels == label).astype(np.uint8)
@@ -73,21 +80,14 @@ def evaluation_function_4(current_game_state):
             score += convex_reward  # Reward for convex shape
         else:
             score += non_convex_penalty  # Penalize for non-convex shape
-
-    block_1 = current_game_state.block1
-    block_2 = current_game_state.block2
-    block_3 = current_game_state.block3
-    num_legal_moves = len(current_game_state.get_legal_actions())
-
-    # Factor in the number of legal moves in the successor state
-
-    # Weight the legal moves positively to keep options open
-    score += 15 * num_legal_moves
-
     return score
 
 
-def evaluation_function_6(current_game_state):
+def best_evaluation_multi(current_game_state):
+    return 15 * remaining_possible_moves(current_game_state) + connected_components(current_game_state)
+
+
+
     # Useful information you can extract from a GameState (game_state.py)
     block_1 = current_game_state.block1
     block_2 = current_game_state.block2
@@ -132,4 +132,5 @@ def evaluation_function_6(current_game_state):
     # number of legal moves in the successor state
 
     # return score + 1000 * num_legal_moves_successor + square_count ** 2 + 10 * successor_empty_tiles + evaluationFunctions.avoid_jagged_edges(current_game_state, action)
-    return evaluation_function_4(current_game_state) + square_count ** 2
+    return connected_components(current_game_state) + square_count ** 2
+

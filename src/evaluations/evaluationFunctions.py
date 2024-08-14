@@ -1,22 +1,8 @@
 import numpy as np
 from tqdm import tqdm
-
+from src.evaluations.evaluationStateFunctions import *
 from src.game import GameState
 import cv2
-
-
-def check_score(current_game_state, action):
-    """
-    This function returns the score given by the game after applying the given action
-    on the given state.
-
-    :param board: the board
-    :param x: occupied block x coordinate
-    :param y: occupied block y coordinate
-    :return:  the number of occupied blocks around the given block
-    """
-    successor_game_state = current_game_state.generate_successor(action=action)
-    return successor_game_state.score
 
 
 def occupied_neighbours(board, x: int, y: int):
@@ -90,87 +76,6 @@ def square_contribution(current_game_state, action):
     return square_count
 
 
-def is_component_convex(component):
-    """
-    Check if the given component (a binary numpy array) is convex.
-    The component is assumed to be a binary mask (1s and 0s).
-
-
-    :param component: the component to check convex for
-    :return: True if the component is convex, False otherwise
-    """
-    # Find contours in the component
-    contours, _ = cv2.findContours(component, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-    if len(contours) == 0:
-        return True  # No contours, trivially convex
-
-    # Check if the largest contour is convex
-    return cv2.isContourConvex(contours[0])
-
-
-def remaining_possible_moves(current_game_state, action):
-    """
-    This evaluation function estimates the number of possible legal actions remaining
-    after applying the given action on the given state.
-
-    :param current_game_state: the current game state
-    :param action: the action to evaluate
-    :return: estimation of the number of possible legal moves after taking said action
-    """
-
-    successor_game_state = current_game_state.generate_successor(action=action)
-    num_legal_moves = len(successor_game_state.get_legal_actions())
-    return num_legal_moves
-
-
-def connected_components(current_game_state, action):
-    """
-    This evaluation function considers both the number and shape of connected components
-    on the board after a move. It aims to minimize the number of components and prefers
-    convex components.
-
-    :param current_game_state: the current game state
-    :param action: the action to evaluate
-    :return: the score of the action
-    """
-
-    # Generate the successor game state based on the action taken
-    successor_game_state = current_game_state.generate_successor(action=action)
-    combo_number = successor_game_state.combo
-    straight_number = successor_game_state.straight
-    # Extract the board from the successor game state
-    board = successor_game_state.board
-
-    # Invert the board to find empty space regions
-    inverted_board = 1 - board
-
-    # Apply connected components labeling to find isolated empty regions
-    num_labels, labels = cv2.connectedComponents(inverted_board, connectivity=4)
-
-    # Initialize the score
-    score = 0
-
-    # Set weights for different factors
-    component_penalty = -10  # Penalty per component
-    convex_reward = 5  # Reward for convex component
-    non_convex_penalty = -20  # Additional penalty for non-convex component
-
-    for label in range(1, num_labels):
-        component = (labels == label).astype(np.uint8)
-        score += component_penalty  # Penalize for having a component
-        if is_component_convex(component):
-            score += convex_reward  # Reward for convex shape
-        else:
-            score += non_convex_penalty  # Penalize for non-convex shape
-
-        # Factor in the number of legal moves in the successor state
-    num_legal_moves = len(successor_game_state.get_legal_actions())
-
-        # Weight the legal moves positively to keep options open
-    score += 15 * num_legal_moves
-
-    return score
 
 
 def best_evaluation(current_game_state, action):
@@ -185,5 +90,7 @@ def best_evaluation(current_game_state, action):
     .. seealso:: :class:`ReflexAgent`
     For more details, see the ReflexAgent class.
     """
-    return connected_components(current_game_state, action) + square_contribution(current_game_state, action) ** 2
+    successor = current_game_state.generate_successor(action=action)
+    return (connected_components(successor) + 15 * remaining_possible_moves(successor) +
+            square_contribution(current_game_state, action) ** 2)
 
