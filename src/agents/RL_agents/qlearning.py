@@ -81,7 +81,7 @@ class ApproximateQAgent(QLearningAgent):
      and update.  All other QLearningAgent functions
      should work as is.
   """
-  def __init__(self, extractor='EncodeExtractor', **args):
+  def __init__(self, extractor='SmartExtractor', **args):
     super().__init__(**args)
     self.featExtractor = util.lookup(extractor, globals())()
 

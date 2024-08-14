@@ -81,7 +81,7 @@ class MCSTNode(Node):
 
 
 class MCST_agent(Agent):
-    def __init__(self, time_limit=1):
+    def __init__(self, time_limit=3):
         super().__init__()
         self.time_limit = time_limit
         self.root = None
@@ -99,7 +99,6 @@ class MCST_agent(Agent):
             self.backpropagate(leaf, reward)
 
         best_node, action = self.get_best_child_action(self.root)
-        self.root = best_node
         return action
 
     def select_node(self, root_node: MCSTNode) -> MCSTNode:

@@ -154,6 +154,8 @@ class GameState:
         self._straight = info["straight"]
         self.legal_action = [i for i in range(len(info["action_mask"])) if info["action_mask"][i] == 1]
         self._score = info["score"]
+
+        assert reward != 0, "Reward should not be 0"
         return self, reward, terminated, info
 
     def apply_opponent_action(self, action):
@@ -213,7 +215,7 @@ class GameState:
             rng, np_seed = seeding.np_random(seed)
             new_state._woodoku_env._np_random = rng
             new_state._woodoku_env._np_random_seed = np_seed
-            # new_state._woodoku_env.seed(seed)
+        #     # new_state._woodoku_env.seed(seed)
 
         # Turn off rendering
         render_mode = new_state._woodoku_env.render_mode
