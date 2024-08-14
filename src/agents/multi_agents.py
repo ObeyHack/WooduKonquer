@@ -143,7 +143,8 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         if agent_index == 0:  # Our agent
             v = float('-inf')
             for action in state.get_legal_actions(agent_index=agent_index):
-                curr_v = self.expectimax(state.generate_successor(action, agent_index=agent_index), depth + 1, 1)
+                next_state = state.generate_successor(action, agent_index=agent_index)
+                curr_v = self.expectimax(next_state, depth + 1, 1)
                 if curr_v > v:
                     v = curr_v
             return v
