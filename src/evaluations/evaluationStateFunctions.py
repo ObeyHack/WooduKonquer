@@ -130,7 +130,7 @@ def square_contribution(current_game_state):
     return max_square_occupied_bricks
 
 
-def best_evaluation(current_game_state):
+def best_evaluation_multi(current_game_state):
     """
     This evaluation function gets a game state and returns a combination of the functions connected_components
     and num_empty_squares
