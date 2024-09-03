@@ -1,4 +1,4 @@
-FROM python:3.9-slim-bullseye
+FROM python:3.10-slim-bullseye
 
 RUN pip install --upgrade pip --progress-bar off
 
@@ -12,4 +12,3 @@ COPY . .
 
 EXPOSE 5100
 
-CMD ["python", "app.py"]
