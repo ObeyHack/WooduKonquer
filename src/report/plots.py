@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-def plot(scores, names):
+def plot(scores, names, title, prev_work=False):
     """
     Plot the scores of different models with mean and std
     :param scores: list of list of scores
@@ -14,12 +14,14 @@ def plot(scores, names):
     plt.errorbar(names, means, yerr=stds, marker='o', linestyle='None')
     plt.ylabel('Score')
     plt.xlabel('Evaluation Function')
-    plt.title('Comparison of different Evaluation Function (mean and std)')
+    plt.title(f'Comparison of different Evaluation Function (mean and std)')
 
     # add y=k line with name 'RL'
-    # plt.axhline(y=3943, color='r', linestyle='--', label='RL - gym-woodoku')
-    # plt.axhline(y=915, color='g', linestyle='--', label='DFS - WoodokuAI')
-    # plt.axhline(y=2000, color='b', linestyle='--', label='Heuristics - WoodokuSolver')
+    if prev_work:
+        plt.axhline(y=3943, color='r', linestyle='--', label='RL - gym-woodoku')
+        plt.axhline(y=915, color='g', linestyle='--', label='DFS - WoodokuAI')
+        plt.axhline(y=2000, color='b', linestyle='--', label='Heuristics - WoodokuSolver')
+
     plt.axhline(y=71, color='y', linestyle='--', label='Random Agent')
     plt.legend(loc="upper left")
     plt.tight_layout()
@@ -54,11 +56,20 @@ def results():
     score1 = np.array([590, 397, 242, 1196, 1075, 1122, 1692, 585, 675, 236])
     name1 = 'Reflex'
 
-    # Minimax
-    score2 = np.array([2030, 647, 1231, 674, 2755])
-    name2 = 'Minimax'
+    # AlphaBeta
+    score2 = np.array([756, 900, 495, 498, 2130, 135, 339, 1135, 1935, 332])
+    name2 = 'AlphaBeta'
 
-    plot([score0, score1, score2], [name0, name1, name2])
+    #  Expectimax
+    score3 = np.array([619, 243, 896, 1070, 239, 590, 174, 815, 1379, 389])
+    name3 = 'Expectimax'
+
+    title = "Comparison of different Agents"
+    plot([score0, score1, score2, score3],
+         [name0, name1, name2, name3],
+                title,
+                prev_work=True
+         )
     plt.show()
 
 
@@ -101,8 +112,9 @@ def eval_func():
     name7 = ('best\n'
              'evaluation')
 
+    title = "Comparison of different Evaluation Function"
     plot([score0, score1, score2, score3, score4, score5, score6, score7],
-         [name0, name1, name2, name3, name4, name5, name6, name7])
+         [name0, name1, name2, name3, name4, name5, name6, name7], title)
 
     plt.show()
 
@@ -110,8 +122,8 @@ def eval_func():
 
 def main():
     # prev_work()
-    # results()
-    eval_func()
+    results()
+    #eval_func()
 
 
 
