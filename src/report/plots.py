@@ -75,7 +75,8 @@ def results():
 
 def eval_func():
     score0 = np.array([255, 145, 274, 100, 134, 328, 187, 98, 103, 470])
-    name0 = ('check\nscore')
+    name0 = ('check\n'
+             'score')
 
 
     score1 = np.array([40, 46, 73, 71, 79, 50, 47, 51,44])
