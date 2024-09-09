@@ -1,9 +1,10 @@
 import collections
 from tqdm import tqdm
-from src import util
-from src.RLgame import RLgameState, RLAgent
-from src.agents.RL_agents.featureExtractor import *
 import random
+from woodokuMind import util
+from woodokuMind.RLgame import RLgameState, RLAgent
+from woodokuMind.agents.RL_agents.featureExtractor import *
+
 
 
 class QLearningAgent(RLAgent):

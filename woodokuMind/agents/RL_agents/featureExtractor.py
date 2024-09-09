@@ -1,6 +1,6 @@
 import numpy as np
 
-from src import util
+from woodokuMind import util
 
 
 class FeatureExtractor:

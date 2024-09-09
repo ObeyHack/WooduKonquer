@@ -1,4 +1,4 @@
-from src.evaluations.evaluationStateFunctions import *
+from woodokuMind.evaluations.evaluationStateFunctions import *
 
 
 def best_evaluation_multi(current_game_state):

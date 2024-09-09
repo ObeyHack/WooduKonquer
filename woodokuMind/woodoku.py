@@ -1,10 +1,10 @@
 import argparse
-from agents.single_agents import RandomAgent, ReflexAgent
-from agents.multi_agents import MinmaxAgent, AlphaBetaAgent, ExpectimaxAgent
-from agents.monte_carlo_tree_search import MCST_agent
-from agents.RL_agents.qlearning import QLearningAgent, ApproximateQAgent
-from agents.RL_agents.mantoCarloControl import MCControlAgent
-from gameRunner import GameRunner
+from woodokuMind.agents.single_agents import RandomAgent, ReflexAgent
+from woodokuMind.agents.multi_agents import MinmaxAgent, AlphaBetaAgent, ExpectimaxAgent
+from woodokuMind.agents.monte_carlo_tree_search import MCST_agent
+from woodokuMind.agents.RL_agents.qlearning import QLearningAgent, ApproximateQAgent
+from woodokuMind.agents.RL_agents.mantoCarloControl import MCControlAgent
+from woodokuMind.gameRunner import GameRunner
 
 SUMMARY_ITERS = 10
 

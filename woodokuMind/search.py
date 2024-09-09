@@ -1,4 +1,4 @@
-import src.util
+import woodokuMind.util
 
 
 class SearchProblem:

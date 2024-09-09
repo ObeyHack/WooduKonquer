@@ -1,10 +1,10 @@
 import random
 import numpy as np
 from gymnasium import Env
-from src.util import raiseNotDefined
 import copy
 from gymnasium.utils import seeding
 from gym_woodoku.envs.blocks import blocks
+from woodokuMind.util import raiseNotDefined
 
 game_block = blocks["woodoku"]
 blocks_range = len(game_block)

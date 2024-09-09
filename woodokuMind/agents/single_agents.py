@@ -1,10 +1,10 @@
 from random import random
-
-from src import util
-from src.evaluations.evaluationFunctions import best_evaluation
 import numpy as np
 from tqdm import tqdm
-from src.game import Agent
+from woodokuMind import util
+from woodokuMind.game import Agent
+from woodokuMind.evaluations.evaluationFunctions import best_evaluation
+
 
 
 class RandomAgent(Agent):

@@ -4,8 +4,8 @@ import os
 import neptune
 from dotenv import load_dotenv
 from neptune.types import File
-from src.game import Game
-from src.RLgame import RLAgent
+from woodokuMind.game import Game
+from woodokuMind.RLgame import RLAgent
 
 
 class GameRunner(object):
