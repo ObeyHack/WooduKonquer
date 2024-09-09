@@ -9,7 +9,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 #python = "^3.10"
-gym-woodoku = {git = "https://github.com/helpingstar/gym-woodoku.git", branch = "main"}
+#gym-woodoku = {git = "https://github.com/helpingstar/gym-woodoku.git", branch = "main"}
 
 
 [build-system]
