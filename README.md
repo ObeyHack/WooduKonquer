@@ -3,7 +3,7 @@
 welcome to the WooduKonquer project, this project aims to explore different AI driven strategies to 
 play the game of Woodoku
 
-![[game_example.mp4]]
+[game_example.mp4](images%2Fgame_example.mp4)
 
 
 
