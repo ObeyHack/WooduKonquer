@@ -7,6 +7,10 @@ play the game of Woodoku
 
 
 
+https://github.com/user-attachments/assets/444c8485-bcf0-4392-9b06-90f6459615cf
+
+
+
 ## How to run the project
 
 ### Environment Setup
