@@ -1,11 +1,7 @@
 # WooduKonquer
 
-welcome to the WooduKonquer project, this project aims to explore different AI driven strategies to 
+Welcome to the WooduKonquer project, this project aims to explore different AI driven strategies to 
 play the game of Woodoku
-
-[game_example.mp4](images%2Fgame_example.mp4)
-
-
 
 https://github.com/user-attachments/assets/444c8485-bcf0-4392-9b06-90f6459615cf
 

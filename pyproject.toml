@@ -1,18 +1,26 @@
 
-[tool.poetry]
+[project]
 name = "WooduKonquer"
 version = "0.1.0"
 description = "Search and Reinforcement Learning algorithms for the game of WooduK"
 authors = ["MNS"]
 license = "MIT License"
 readme = "README.md"
+requires-python = ">= 3.9"
+dependencies = [
+  "httpx",
+  "gidgethub[httpx]>4.0.0",
+  "django>2.1; os_name != 'nt'",
+  "django>2.0; os_name == 'nt'",
+]
+
+
 
 [tool.poetry.dependencies]
 python = "^3.10"
-
 gym-woodoku = {git = "https://github.com/helpingstar/gym-woodoku.git", branch = "main"}
 
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+build-backend = "flit_core.buildapi"
+requires = ["flit_core >=3.2,<4"]
