@@ -7,7 +7,7 @@ authors =  [
   {name = "Sean Cherny"},
   {name = "Noam Hakim"},
   {name = "Michael Merzin"},
-  ]
+]
 license = {text = "MIT License"}
 readme = "README.md"
 requires-python = ">= 3.9"
