@@ -14,13 +14,13 @@ def plot(scores, names, title, prev_work=False):
     plt.errorbar(names, means, yerr=stds, marker='o', linestyle='None')
     plt.ylabel('Score')
     plt.xlabel('Evaluation Function')
-    plt.title(f'Comparison of different Evaluation Function (mean and std)')
+    plt.title(f'{title} (mean and std)')
 
     # add y=k line with name 'RL'
     if prev_work:
         plt.axhline(y=3943, color='r', linestyle='--', label='RL - gym-woodoku')
         plt.axhline(y=915, color='g', linestyle='--', label='DFS - WoodokuAI')
-        plt.axhline(y=2000, color='b', linestyle='--', label='Heuristics - WoodokuSolver')
+        plt.axhline(y=1676, color='b', linestyle='--', label='Heuristics - WoodokuSolver')
 
     plt.axhline(y=71, color='y', linestyle='--', label='Random Agent')
     plt.legend(loc="upper left")
@@ -29,7 +29,7 @@ def plot(scores, names, title, prev_work=False):
 
 def prev_work():
     # WoodokuSolver - heuristics - https://github.com/Zeltq/WoodokuSolver/tree/main
-    score0 = np.array([630, 2490, 6900, 4800])
+    score0 = np.array([315, 1245, 3045, 2100])
     name0 = 'WoodokuSolver'
 
     # DFS - WoodokuAI - https://github.com/CosmicSubspace/WoodokuAI/tree/master
@@ -41,7 +41,8 @@ def prev_work():
     score2 = np.array([3943])
     name2 = 'RL'
 
-    plot([score0, score1, score2], [name0, name1, name2])
+    title = "Comparison of previous work"
+    plot([score0, score1, score2], [name0, name1, name2], title, prev_work=False)
     plt.show()
 
 
@@ -49,24 +50,31 @@ def results():
     # Random
     score0 = np.array([44, 168, 52, 75, 40, 44, 81, 111, 47, 50])
     name0 = 'Random'
-    print(np.mean(score0))
-
 
     # Reflex
     score1 = np.array([590, 397, 242, 1196, 1075, 1122, 1692, 585, 675, 236])
     name1 = 'Reflex'
 
     # AlphaBeta
-    score2 = np.array([756, 900, 495, 498, 2130, 135, 339, 1135, 1935, 332])
+    score2 = np.array([1321, 879, 1889, 952,881,1079,298,357,396,286,197,1458])
     name2 = 'AlphaBeta'
 
     #  Expectimax
-    score3 = np.array([619, 243, 896, 1070, 239, 590, 174, 815, 1379, 389])
+    score3 = np.array([915, 203, 346,450,469,645,244.346,2321,979])
     name3 = 'Expectimax'
 
+    # Q-Learning
+    score4 = np.array([267, 156, 110, 325, 204, 228, 110, 85, 109, 83])
+    name4 = 'Q-Learning'
+
+    # Approximate Q-Learning
+    score5 = np.array([172, 207, 132, 250, 80, 332, 101, 43, 200, 290])
+    name5 = 'Approximate Q-Learning'
+
+
     title = "Comparison of different Agents"
-    plot([score0, score1, score2, score3],
-         [name0, name1, name2, name3],
+    plot([score0, score1, score2, score3, score4, score5],
+         [name0, name1, name2, name3, name4, name5],
                 title,
                 prev_work=True
          )
@@ -103,7 +111,7 @@ def eval_func():
              'edges\n'
              'diag')
 
-    score6 = np.array([289, 561, 130 , 356, 967, 1383, 782, 195, 250, 488])
+    score6 = np.array([289, 561, 130, 356, 967, 1383, 782, 195, 250, 488])
     name6 = ('remaining\n'
              'possible\n'
              'moves')
@@ -120,11 +128,35 @@ def eval_func():
     plt.show()
 
 
+def feature_extraction():
+    score0 = np.array([172, 207, 132, 250, 80, 332, 101, 43, 200, 290])
+    name0 = ('Identity\n'
+            'Extractor')
+
+    score1 = np.array([215, 84, 222, 329, 84, 72, 162, 77, 133, 76])
+    name1 = ('Smart\n'
+            'Extractor')
+
+    score2 = np.array([214, 79, 54, 229, 78, 137, 202, 209, 160, 262])
+    name2 = ('Estimation\n'
+            'Estimator')
+
+    score3 = np.array([190, 82, 58, 159, 278, 199, 198, 177, 67, 149])
+    name3 = ('Estimation\n'
+            'Dif\n'
+            'Estimator')
+
+    title = "Comparison of different Feature Extraction"
+
+    plot([score0, score1, score2, score3],
+         [name0, name1, name2, name3], title)
+    plt.show()
 
 def main():
     # prev_work()
+    # eval_func()
     results()
-    #eval_func()
+    # feature_extraction()
 
 
 

@@ -147,9 +147,8 @@ class GameState:
 
         # check if all 3 of the blocks are full
         if (not np.all(self.block1 == 0)) and (not np.all(self.block2 == 0)) and (not np.all(self.block3 == 0)):
-            # randomly choose 50 elements from the block_space
             return block_space
-            return random.sample(block_space, 200)
+            # return random.sample(block_space, 200)
 
         else:
             return [(-1, -1, -1)]
