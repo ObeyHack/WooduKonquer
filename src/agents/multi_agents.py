@@ -80,6 +80,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     """
     Your minimax agent with alpha-beta pruning (question 3)
     """
+    def __init__(self, depth=2, **kwargs):
+        super().__init__(depth=depth, **kwargs)
 
     def get_action(self, game_state):
         """
@@ -123,6 +125,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
+    def __init__(self, depth=1, **kwargs):
+        super().__init__(depth=depth, **kwargs)
     def get_action(self, game_state):
         """
         Returns the expectimax action using self.depth and self.evaluationFunction
