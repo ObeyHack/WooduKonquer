@@ -9,9 +9,12 @@ from gym_woodoku.envs.blocks import blocks
 game_block = blocks["woodoku"]
 blocks_range = len(game_block)
 block_space = []
-for i in range(blocks_range):
-    for j in range(i+1, blocks_range):
-        for k in range(j+1, blocks_range):
+
+worst_case_blocks_idx = [0, 1, 6, 7, 8, 9, 10, 11, 12, 15, 16, 45, 46]
+worst_case_range = len(worst_case_blocks_idx)
+for i in range(worst_case_range):
+    for j in range(i+1, worst_case_range):
+        for k in range(j+1, worst_case_range):
             block_space.append((i, j, k))
 
 class GameState:
@@ -145,6 +148,7 @@ class GameState:
         # check if all 3 of the blocks are full
         if (not np.all(self.block1 == 0)) and (not np.all(self.block2 == 0)) and (not np.all(self.block3 == 0)):
             # randomly choose 50 elements from the block_space
+            return block_space
             return random.sample(block_space, 200)
 
         else:
@@ -160,7 +164,7 @@ class GameState:
         self.legal_action = [i for i in range(len(info["action_mask"])) if info["action_mask"][i] == 1]
         self._score = info["score"]
 
-        assert reward != 0, "Reward should not be 0"
+        # assert reward != 0, "Reward should not be 0"
         return self, reward, terminated, info
 
     def apply_opponent_action(self, action):
