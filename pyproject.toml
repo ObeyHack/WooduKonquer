@@ -1,0 +1,8 @@
+
+[project]
+name = "WooduKonquer"
+version = "0.1.0"
+description = "Search and Reinforcement Learning algorithms for the game of WooduK"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
