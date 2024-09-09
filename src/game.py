@@ -164,7 +164,7 @@ class GameState:
         self.legal_action = [i for i in range(len(info["action_mask"])) if info["action_mask"][i] == 1]
         self._score = info["score"]
 
-        # assert reward != 0, "Reward should not be 0"
+        #  assert reward != 0, "Reward should not be 0"
         return self, reward, terminated, info
 
     def apply_opponent_action(self, action):
