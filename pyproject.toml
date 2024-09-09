@@ -1,25 +1,26 @@
 
 [project]
-name = "WooduKonquer"
+name = "src"
 version = "0.1.0"
 description = "Search and Reinforcement Learning algorithms for the game of WooduK"
-authors = ["MNS"]
-license = "MIT License"
+authors =  [
+  {name = "Sean Cherny"},
+  {name = "Noam Hakim"},
+  {name = "Michael Merzin"},
+  ]
+license = {text = "MIT License"}
 readme = "README.md"
 requires-python = ">= 3.9"
 dependencies = [
-  "httpx",
-  "gidgethub[httpx]>4.0.0",
-  "django>2.1; os_name != 'nt'",
-  "django>2.0; os_name == 'nt'",
+  "numpy",
 ]
 
 
 
-[tool.poetry.dependencies]
-python = "^3.10"
-gym-woodoku = {git = "https://github.com/helpingstar/gym-woodoku.git", branch = "main"}
-
+#[tool.poetry.dependencies]
+#python = "^3.10"
+#gym-woodoku = {git = "https://github.com/helpingstar/gym-woodoku.git", branch = "main"}
+#
 
 [build-system]
 build-backend = "flit_core.buildapi"
