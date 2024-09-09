@@ -4,8 +4,7 @@ import os
 import neptune
 from dotenv import load_dotenv
 from neptune.types import File
-
-from game import Game
+from src.game import Game
 from src.RLgame import RLAgent
 
 

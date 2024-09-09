@@ -15,6 +15,11 @@ dependencies = [
   "numpy",
 ]
 
+[project.scripts]
+spam-cli = "spam:main_cli"
+
+#[project.gui-scripts]
+#spam-gui = "woodoku:src.woodoku:main"
 
 
 #[tool.poetry.dependencies]
