@@ -1,6 +1,6 @@
 
 [project]
-name = "src"
+name = "woodokuMind"
 version = "0.1.0"
 description = "Search and Reinforcement Learning algorithms for the game of WooduK"
 authors =  [
@@ -16,7 +16,7 @@ dependencies = [
 ]
 
 [project.scripts]
-spam-cli = "spam:main_cli"
+woodoku-cli = "woodokuMind:woodoku"
 
 #[project.gui-scripts]
 #spam-gui = "woodoku:src.woodoku:main"
