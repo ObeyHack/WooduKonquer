@@ -71,6 +71,11 @@ In addition to the agents, the project has different display modes that can be u
 
 * The `-l` flag is used to log the game score using `neptune.ai`, which should be set up via `.env` file.
 
+So to play the game using the `minimax` agent and render the game using the `GUI` mode, you can use the following command:
+```bash
+woodoku-cli -a minimax -d GUI
+```
+
 # Docker Usage
 download docker desktop (from software center)
 you may need to install WSL2 if it ask you to
