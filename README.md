@@ -11,7 +11,11 @@ https://github.com/user-attachments/assets/444c8485-bcf0-4392-9b06-90f6459615cf
 
 ### Environment Setup
 To run the project, you need to have `python:3.10` or higher installed on your machine.
-1. Create a virtual environment
+1. `clone` the project
+```bash
+git clone ...
+```
+2. Create a virtual environment
 ```bash
 python -m venv venv
 ```
