@@ -85,8 +85,6 @@ class EstimationExtractor(FeatureExtractor):
         features.normalize()
         return features
 
-
-
 class EstimationDifExtractor(FeatureExtractor):
     def getFeatures(self, state, action):
         features = util.Counter()
@@ -125,54 +123,3 @@ class EstimationDifExtractor(FeatureExtractor):
         return features
 
 
-class EncodeExtractor(FeatureExtractor):
-    def __init__(self, input_dim=157, encoding_dim=30):
-        self.encoder = EncodeExtractor.build_autoencoder(input_dim, encoding_dim)
-
-    @staticmethod
-    def build_autoencoder(input_dim, encoding_dim):
-        from keras.layers import Input, Dense
-        from keras.models import Model
-        # Input layer
-        input_layer = Input(shape=(input_dim,))
-
-        # Encoder layers
-        encoded = Dense(encoding_dim, activation='relu')(input_layer)
-
-        # Decoder layers
-        decoded = Dense(input_dim, activation='sigmoid')(encoded)
-
-        # Autoencoder model
-        autoencoder = Model(input_layer, decoded)
-
-        # Encoder model (for extracting compressed states)
-        encoder = Model(input_layer, encoded)
-
-        # Compile the autoencoder
-        autoencoder.compile(optimizer='adam', loss='binary_crossentropy')
-
-        return encoder
-
-
-    def getFeatures(self, state, action):
-
-        board = state.board
-        block1 = state.block1
-        block2 = state.block2
-        block3 = state.block3
-        vector = np.concatenate((board.flatten(), block1.flatten(), block2.flatten(), block3.flatten()))
-        # add the action to the vector
-        vector = np.append(vector, action)
-        features = self.encoder.predict(vector.reshape(1, -1), verbose=0)
-        # threshold for the features from 0 to 0.1 goes to 0, 0.1 to 0.2 goes to 1, 0.2 to 0.3 goes to 2, 0.3 to 0.4 goes to 3, 0.4 to 0.5 goes to 4
-        # features = np.round(features * 10)
-        # thresehold to one
-        features[features < 0.5] = 0
-        features[features >= 0.5] = 1
-
-        features = features.flatten()
-
-        features_dict = util.Counter()
-        for i in range(len(features)):
-            features_dict[i] = features[i]
-        return features_dict
