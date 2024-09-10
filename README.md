@@ -19,10 +19,16 @@ git clone ...
 ```bash
 python -m venv venv
 ```
-3. Activate the virtual environment
-```bash
-source venv/bin/activate
-```
+3. Activate the virtual environment 
+   1. For **linux**:
+   ```bash
+    source venv/bin/activate
+    ```
+   2. For **Windows**:
+   ```bash
+    . venv\scripts\activat
+    ```
+
 4. Install the dependencies
 ```bash
 pip install .
