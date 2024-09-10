@@ -22,7 +22,6 @@ agents = {
 
 render_modes = {
     "GUI": "human",
-    "Video": "rgb_array",
     "Text": "ansi",
     "SummaryDisplay": None,
     "Testing": None,

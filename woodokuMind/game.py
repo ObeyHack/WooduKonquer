@@ -36,8 +36,6 @@ class GameState:
         self._env = env
         self._cur_observation = observation
         self._woodoku_env = self._env.env.env
-        if self._env.render_mode == "rgb_array":
-            self._woodoku_env = self._env.env.env.env
         self._woodoku_env.__deepcopy__ = self.__copy
         self.terminated = False
         self.legal_action = np.array([i for i in range(len(info["action_mask"])) if info["action_mask"][i] == 1])
