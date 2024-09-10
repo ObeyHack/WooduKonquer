@@ -76,11 +76,3 @@ So to play the game using the `minimax` agent and render the game using the `GUI
 woodoku-cli -a minimax -d GUI
 ```
 
-# Docker Usage
-download docker desktop (from software center)
-you may need to install WSL2 if it ask you to
-
-## Building the image 
-```bash
-docker build . -t woodukonquer
-```
