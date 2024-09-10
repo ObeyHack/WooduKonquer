@@ -1,10 +1,11 @@
 from itertools import groupby
 import numpy as np
 from tqdm import tqdm
-from src import util
-from src.game import Agent, GameState, Game
 from gymnasium import Env
 import gymnasium as gym
+from woodokuMind import util
+from woodokuMind.game import Agent, GameState, Game
+
 
 
 class RLgameState(GameState):

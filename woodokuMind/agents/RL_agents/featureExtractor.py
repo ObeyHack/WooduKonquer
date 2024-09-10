@@ -1,6 +1,6 @@
 import numpy as np
 
-from src import util
+from woodokuMind import util
 
 
 class FeatureExtractor:
@@ -158,3 +158,4 @@ class EstimationDifExtractor(FeatureExtractor):
                     10 * len(successor_game_state.get_legal_actions()) + compressed_board[square[0], square[1]] ** 2)
         features.normalize()
         return features
+

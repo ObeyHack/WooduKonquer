@@ -2,8 +2,8 @@ import math
 import random
 from time import time as clock
 from copy import deepcopy
-from src.search import Node
-from src.game import Agent, GameState
+from woodokuMind.search import Node
+from woodokuMind.game import Agent, GameState
 
 
 class MCSTNode(Node):

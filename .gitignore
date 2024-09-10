@@ -2,9 +2,10 @@
 /.idea/
 /.env/
 /.ipynb_checkpoints/
-/src/video_folder/
-/src/.neptune/
 .DS_Store
 *.pyc
 .env
 .env
+/.obsidian
+/woodokuMind/.neptune
+/woodokuMind/video_folder/*.mp4

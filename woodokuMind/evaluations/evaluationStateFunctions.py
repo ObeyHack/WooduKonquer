@@ -1,8 +1,8 @@
 import numpy as np
 from tqdm import tqdm
-
-from src.game import GameState
 import cv2
+from woodokuMind.game import GameState
+
 
 
 def score_function(current_game_state):

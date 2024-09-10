@@ -1,9 +1,9 @@
 import abc
-from tqdm import tqdm
-from src import util
-from src.game import Agent
 import numpy as np
-from src.evaluations.evaluationFunctions import best_evaluation_multi
+from tqdm import tqdm
+from woodokuMind import util
+from woodokuMind.game import Agent
+from woodokuMind.evaluations.evaluationFunctions import best_evaluation_multi
 
 
 class MultiAgentSearchAgent(Agent):

@@ -1,11 +1,11 @@
 import collections
-from src.RLgame import RLgameState, RLAgent
 import random
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import numpy as np
+from woodokuMind.RLgame import RLgameState, RLAgent
 
 class DeepQlearningAgent(RLAgent):
     def __init__(self, alpha=1.0, epsilon=0.05, gamma=0.8):

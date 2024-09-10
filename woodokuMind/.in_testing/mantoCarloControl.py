@@ -1,12 +1,11 @@
 import collections
 import random
-
 import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 import seaborn as sns
-from src.RLgame import RLgameState
-from src.agents.RL_agents.qlearning import QLearningAgent
+from woodokuMind.RLgame import RLgameState
+from woodokuMind.agents.RL_agents.qlearning import QLearningAgent
 
 
 class MCControlAgent(QLearningAgent):

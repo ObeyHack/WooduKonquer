@@ -1,10 +1,10 @@
 import random
 import numpy as np
 from gymnasium import Env
-from src.util import raiseNotDefined
 import copy
 from gymnasium.utils import seeding
 from gym_woodoku.envs.blocks import blocks
+from woodokuMind.util import raiseNotDefined
 
 game_block = blocks["woodoku"]
 blocks_range = len(game_block)
@@ -36,8 +36,6 @@ class GameState:
         self._env = env
         self._cur_observation = observation
         self._woodoku_env = self._env.env.env
-        if self._env.render_mode == "rgb_array":
-            self._woodoku_env = self._env.env.env.env
         self._woodoku_env.__deepcopy__ = self.__copy
         self.terminated = False
         self.legal_action = np.array([i for i in range(len(info["action_mask"])) if info["action_mask"][i] == 1])
@@ -147,9 +145,8 @@ class GameState:
 
         # check if all 3 of the blocks are full
         if (not np.all(self.block1 == 0)) and (not np.all(self.block2 == 0)) and (not np.all(self.block3 == 0)):
-            # randomly choose 50 elements from the block_space
             return block_space
-            return random.sample(block_space, 200)
+            # return random.sample(block_space, 200)
 
         else:
             return [(-1, -1, -1)]

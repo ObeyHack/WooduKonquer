@@ -1,34 +1,29 @@
 import argparse
-from agents.single_agents import RandomAgent, ReflexAgent
-from agents.multi_agents import MinmaxAgent, AlphaBetaAgent, ExpectimaxAgent
-from agents.monte_carlo_tree_search import MCST_agent
-from agents.RL_agents.qlearning import QLearningAgent, ApproximateQAgent
-from agents.RL_agents.mantoCarloControl import MCControlAgent
-from gameRunner import GameRunner
+from woodokuMind.agents.single_agents import RandomAgent, ReflexAgent
+from woodokuMind.agents.multi_agents import MinmaxAgent, AlphaBetaAgent, ExpectimaxAgent
+from woodokuMind.agents.RL_agents.qlearning import QLearningAgent, ApproximateQAgent
+from woodokuMind.gameRunner import GameRunner
 
 SUMMARY_ITERS = 10
 
 agents = {
     "random": RandomAgent,
     "reflex": ReflexAgent,
-    "mtcs": MCST_agent,
     "minimax": MinmaxAgent,
     "alpha_beta": AlphaBetaAgent,
     "expectimax": ExpectimaxAgent,
     "q_learning": QLearningAgent,
     "q_approx": ApproximateQAgent,
-    "mc_control": MCControlAgent,
 }
 
 render_modes = {
     "GUI": "human",
-    "Video": "rgb_array",
     "Text": "ansi",
     "SummaryDisplay": None,
     "Testing": None,
 }
 
-RL_agents = ["q_learning", "q_approx", "mc_control"]
+RL_agents = ["q_learning", "q_approx"]
 
 
 def parse_args():
