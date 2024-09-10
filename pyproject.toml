@@ -17,8 +17,10 @@ dependencies = [
   "keyboard",
   "python-dotenv",
   "seaborn",
-    "neptune",
-    "gym-woodoku@git+https://github.com/helpingstar/gym-woodoku.git",
+  "matplotlib",
+  "neptune",
+  "gym-woodoku@git+https://github.com/helpingstar/gym-woodoku.git",
+  "cv2",
 
 
 ]
