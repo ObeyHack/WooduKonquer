@@ -1,7 +1,7 @@
 # WooduKonquer
 
 Welcome to the WooduKonquer project, this project aims to explore different AI driven strategies to 
-play the game of Woodoku
+play the game of Woodoku.
 
 https://github.com/user-attachments/assets/444c8485-bcf0-4392-9b06-90f6459615cf
 
@@ -37,7 +37,7 @@ pip install .
 woodoku-cli -h
 ```
 
-## The Different Agents and their flags
+## The Different Agents and Their Flags
 
 ```Usage
 usage: woodoku-cli [-h] [-a {random,reflex,minimax,alpha_beta,expectimax,q_learning,q_approx}] [-d {GUI,Text,SummaryDisplay,Testing}] [-l]
