@@ -5,10 +5,9 @@ python-dotenv
 neptune
 tqdm
 git+https://github.com/helpingstar/gym-woodoku.git
+
 #gymnasium
 #gymnasium[other]
-
-
 #ffmpeg
 #imageio-ffmpeg
 #keras

@@ -21,8 +21,6 @@ dependencies = [
   "neptune",
   "gym-woodoku@git+https://github.com/helpingstar/gym-woodoku.git",
   "opencv-python",
-
-
 ]
 
 [project.scripts]
