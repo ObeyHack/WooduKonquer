@@ -43,7 +43,7 @@ def parse_args():
                         help="Render mode", default="GUI")
 
     # log
-    parser.add_argument('-l', "--log", action='store_true', help='Log the game to a file', dest='log')
+    parser.add_argument('-l', "--log", action='store_true', help='Log the game via neptune', dest='log')
 
     # # conditional arguments - evaluation function
     # subparsers = parser.add_subparsers(dest='subcommand')

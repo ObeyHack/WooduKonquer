@@ -1,7 +1,7 @@
 # WooduKonquer
 
 Welcome to the WooduKonquer project, this project aims to explore different AI driven strategies to 
-play the game of Woodoku
+play the game of Woodoku.
 
 https://github.com/user-attachments/assets/444c8485-bcf0-4392-9b06-90f6459615cf
 
@@ -37,7 +37,7 @@ pip install .
 woodoku-cli -h
 ```
 
-## The Different Agents and their flags
+## The Different Agents and Their Flags
 
 ```Usage
 usage: woodoku-cli [-h] [-a {random,reflex,minimax,alpha_beta,expectimax,q_learning,q_approx}] [-d {GUI,Text,SummaryDisplay,Testing}] [-l]
@@ -50,7 +50,7 @@ options:
                         Agent to play the game
   -d {GUI,Text,SummaryDisplay,Testing}, --display {GUI,Text,SummaryDisplay,Testing}
                         Render mode
-  -l, --log             Log the game to a file
+  -l, --log             Log the game via neptune
 
 ```
 As can be seen from the above, the project has different agents that can be used to play the game. The agents are:
@@ -70,6 +70,11 @@ In addition to the agents, the project has different display modes that can be u
 4. `Testing` - This mode doesn't render the game but only display the results of the game. `woodoku-cli -d Testing`
 
 * The `-l` flag is used to log the game score using `neptune.ai`, which should be set up via `.env` file.
+
+So to play the game using the `minimax` agent and render the game using the `GUI` mode, you can use the following command:
+```bash
+woodoku-cli -a minimax -d GUI
+```
 
 # Docker Usage
 download docker desktop (from software center)
