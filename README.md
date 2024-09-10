@@ -50,7 +50,7 @@ options:
                         Agent to play the game
   -d {GUI,Text,SummaryDisplay,Testing}, --display {GUI,Text,SummaryDisplay,Testing}
                         Render mode
-  -l, --log             Log the game to a file
+  -l, --log             Log the game via neptune
 
 ```
 As can be seen from the above, the project has different agents that can be used to play the game. The agents are:
