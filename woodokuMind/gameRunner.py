@@ -52,26 +52,9 @@ class GameRunner(object):
         # Turn on rendering
         self._woodoku_env.render_mode = self.render_mode
 
-    def _log_videos(self):
-        # all video files are stored in the video_folder named: {agent_type}*
-        if not self.env.render_mode == "rgb_array":
-            return
-        video_folder = "./video_folder"
-        for file in os.listdir(video_folder):
-            if file.startswith(self.agent_type):
-                path = os.path.join(video_folder, file)
-                self.logger[file].upload(path)
-
     def setup_env(self):
         self.env = gym.make('gym_woodoku/Woodoku-v0', game_mode='woodoku', render_mode=self.render_mode)
-        if self.render_mode == "rgb_array":
-            self.env = gym.wrappers.RecordVideo(self.env, video_folder='./video_folder',
-                                                episode_trigger=lambda x: x % 5 == 0, name_prefix=self.agent_type)
-
         self._woodoku_env = self.env.env.env
-        if self.env.render_mode == "rgb_array":
-            self._woodoku_env = self.env.env.env.env
-
         self.game = Game(self.env, self.agent)
 
     def play(self):
@@ -96,6 +79,5 @@ class GameRunner(object):
         
         if self.logger:
             self.logger["average_score"] = sum(scores) / self.num_episodes
-            self._log_videos()
             self.logger.stop()
 

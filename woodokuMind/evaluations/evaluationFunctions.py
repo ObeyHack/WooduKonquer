@@ -9,10 +9,17 @@ def best_evaluation_multi(current_game_state):
     :param current_game_state: the current game state
     :return: the number of 3x3 empty crushable squares on the board
     """
-    score = (15 * remaining_possible_moves(current_game_state) +
-            1 * connected_components(current_game_state) + 1 * square_contribution(current_game_state)**2) \
-            - 3 * avoid_jagged_edges(current_game_state) + 0 * score_function(current_game_state) + 0 * row_contribution(current_game_state) + \
-            0 * column_contribution(current_game_state) + 2 * num_empty_squares(current_game_state) - 1 * avoid_jagged_edges_diag(current_game_state)
+    score = (
+             15 * int(remaining_possible_moves(current_game_state)) +
+             1 * int(connected_components(current_game_state)) +
+             1 * int(square_contribution(current_game_state)**2) -
+             3 * int(avoid_jagged_edges(current_game_state)) +
+             0 * int(score_function(current_game_state)) +
+             0 * int(row_contribution(current_game_state)) +
+             0 * int(column_contribution(current_game_state)) +
+             2 * int(num_empty_squares(current_game_state)) -
+             1 * int(avoid_jagged_edges_diag(current_game_state))
+             )
     return score
 
 
