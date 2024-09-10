@@ -4,52 +4,79 @@ from src import util
 
 
 class FeatureExtractor:
-  def getFeatures(self, state, action):
-    """
-      Returns a dict from features to counts
-      Usually, the count will just be 1.0 for
-      indicator functions.
-    """
-    util.raiseNotDefined()
+    def getFeatures(self, state, action):
+        """
+          Returns a dict from features to counts
+          Usually, the count will just be 1.0 for
+          indicator functions.
+        """
+        util.raiseNotDefined()
 
 
 class IdentityExtractor(FeatureExtractor):
-  def getFeatures(self, state, action):
-      feats = util.Counter()
-      feats[(state, action)] = 1.0
-      return feats
+    def getFeatures(self, state, action):
+        """
+        gets a state and an action and returns them as features on the feature map.
+
+        :param state: the current game state
+        :param action: a legal action in the given state
+        :return: feature map with keys of shape (state, action)
+        """
+        feats = util.Counter()
+        feats[(state, action)] = 1.0
+        return feats
 
 
 class SmartExtractor(FeatureExtractor):
-  def getFeatures(self, state, action):
-    features = util.Counter()
-    features["bias"] = 1.0
-    state2 = state.generate_successor(action)
+    def getFeatures(self, state, action):
+        """
+        gets a state and an action and maps them to several underlying features.
+        The features are bias, score, combo, number of stuck cells and difference in cells
+        aftert taking the given action in the given state
 
-    # Custom Features
-    ### combo
-    features["combo"] = state2.combo
-    ### score
-    features["score"] = state2.score
-    ### straight
-    features["straight"] = state2.straight
-    ### stuck cells (number of single cells that are all surrounded by other cells)
-    features["stuck cells"] = 0
-    for i in range(len(state2.board)):
-        for j in range(len(state2.board[i])):
-            if state2.board[i][j] == 0:
-                if i == 0 or i == len(state2.board) - 1 or j == 0 or j == len(state2.board[i]) - 1:
-                    continue
-                if state2.board[i - 1][j] != 0 and state2.board[i + 1][j] != 0 and state2.board[i][j - 1] != 0 and state2.board[i][j + 1] != 0:
-                    features["stuck cells"] += 1
+        :param state: the current game state
+        :param action: a legal action in the given state
+        :return: feature map with keys of shape (state, action)
+        """
+        features = util.Counter()
+        features["bias"] = 1.0
+        state2 = state.generate_successor(action)
 
-    features["cell diff"] = np.sum(state2.board == 0) - np.sum(state.board == 0)
-    features.normalize()
-    return features
+        # Custom Features
+        ### combo
+        features["combo"] = state2.combo
+        ### score
+        features["score"] = state2.score
+        ### straight
+        features["straight"] = state2.straight
+        ### stuck cells (number of single cells that are all surrounded by other cells)
+        features["stuck cells"] = 0
+        for i in range(len(state2.board)):
+            for j in range(len(state2.board[i])):
+                if state2.board[i][j] == 0:
+                    if i == 0 or i == len(state2.board) - 1 or j == 0 or j == len(state2.board[i]) - 1:
+                        continue
+                    if state2.board[i - 1][j] != 0 and state2.board[i + 1][j] != 0 and state2.board[i][j - 1] != 0 and \
+                            state2.board[i][j + 1] != 0:
+                        features["stuck cells"] += 1
+
+        features["cell diff"] = np.sum(state2.board == 0) - np.sum(state.board == 0)
+        features.normalize()
+        return features
 
 
 class EstimationExtractor(FeatureExtractor):
     def getFeatures(self, state, action):
+        """
+        This function extracts features from the state, for the given state and action, the features are the number of
+        bricks in each 3X3 square and the number of bricks in the square where the action is taken.
+        maps state and an action to a compressed board state, the 3x3 square where the block is placed and
+        the block type. The features are normalized.
+
+        :param state: the current state of the game
+        :param action: the action to take
+        :return: a dictionary of features and their values for the given state and action
+        """
         features = util.Counter()
         block_1 = state.block1
         block_2 = state.block2
@@ -65,7 +92,6 @@ class EstimationExtractor(FeatureExtractor):
                 break
         successor_game_state = state.generate_successor(action=action)
 
-
         # interpret an action as choosing a 3X3 square to place the block in rather then a specific location
         square = (row // 3, column // 3)
         square_center = (square[0] * 3 + 1, square[1] * 3 + 1)
@@ -74,25 +100,34 @@ class EstimationExtractor(FeatureExtractor):
         board = successor_game_state.board
         compressed_board = board[square_center[0] - 1: square_center[0] + 2, square_center[1] - 1: square_center[1] + 2]
         compressed_board_rep = 0
-        prev_compressed_board = prev_board[square_center[0] - 1: square_center[0] + 2, square_center[1] - 1: square_center[1] + 2]
+        prev_compressed_board = prev_board[square_center[0] - 1: square_center[0] + 2,
+                                square_center[1] - 1: square_center[1] + 2]
         coord = (row % 3, column % 3)
         for i in range(3):
             for j in range(3):
-                compressed_board_rep += int(compressed_board[i, j]) * (10 **  (i * 3 + j))
-        features[(compressed_board_rep, coord, block_num)] = (np.sum(compressed_board)**2 +
+                compressed_board_rep += int(compressed_board[i, j]) * (10 ** (i * 3 + j))
+        features[(compressed_board_rep, coord, block_num)] = (np.sum(compressed_board) ** 2 +
                                                               10 * np.max(np.sum(compressed_board == 0)
                                                                           - np.sum(prev_compressed_board == 0), 0))
         features.normalize()
         return features
 
 
-
 class EstimationDifExtractor(FeatureExtractor):
     def getFeatures(self, state, action):
+        """
+        This function extracts features from the state, for the given state and action, the features are the number of
+        bricks in each 3X3 square and the number of bricks in the square where the action is taken with more emphasis on
+        remaining legal moves. maps state and an action to a compressed board state, the 3x3 square where the block is
+        placed and the block type. The features are normalized.
+
+        :param state: the current state of the game
+        :param action: the action to take
+        :return: a dictionary of features and their values for the given state and action
+        """
         features = util.Counter()
         successor_game_state = state.generate_successor(action=action)
         block, row, column = action // 81, (action % 81) // 9, (action % 81) % 9
-
 
         # interpret an action as choosing a 3X3 square to place the block in rather then a specific location
         square = (row // 3, column // 3)
@@ -108,7 +143,6 @@ class EstimationDifExtractor(FeatureExtractor):
                 block_num = i
                 break
         # interpret board as squares with the number of bricks inside each square
-        prev_board = state.board
         board = successor_game_state.board
         compressed_board = np.zeros(shape=(3, 3))
         for i in range(3):
@@ -120,59 +154,7 @@ class EstimationDifExtractor(FeatureExtractor):
         for i in range(3):
             for j in range(3):
                 compressed_board_rep += compressed_board[i, j] * (10 ** (i * 3 + j))
-        features[(compressed_board_rep, square, block_num)] = (10 * len(successor_game_state.get_legal_actions()) + compressed_board[square[0], square[1]] ** 2)
+        features[(compressed_board_rep, square, block_num)] = (
+                    10 * len(successor_game_state.get_legal_actions()) + compressed_board[square[0], square[1]] ** 2)
         features.normalize()
         return features
-
-
-class EncodeExtractor(FeatureExtractor):
-    def __init__(self, input_dim=157, encoding_dim=30):
-        self.encoder = EncodeExtractor.build_autoencoder(input_dim, encoding_dim)
-
-    @staticmethod
-    def build_autoencoder(input_dim, encoding_dim):
-        from keras.layers import Input, Dense
-        from keras.models import Model
-        # Input layer
-        input_layer = Input(shape=(input_dim,))
-
-        # Encoder layers
-        encoded = Dense(encoding_dim, activation='relu')(input_layer)
-
-        # Decoder layers
-        decoded = Dense(input_dim, activation='sigmoid')(encoded)
-
-        # Autoencoder model
-        autoencoder = Model(input_layer, decoded)
-
-        # Encoder model (for extracting compressed states)
-        encoder = Model(input_layer, encoded)
-
-        # Compile the autoencoder
-        autoencoder.compile(optimizer='adam', loss='binary_crossentropy')
-
-        return encoder
-
-
-    def getFeatures(self, state, action):
-
-        board = state.board
-        block1 = state.block1
-        block2 = state.block2
-        block3 = state.block3
-        vector = np.concatenate((board.flatten(), block1.flatten(), block2.flatten(), block3.flatten()))
-        # add the action to the vector
-        vector = np.append(vector, action)
-        features = self.encoder.predict(vector.reshape(1, -1), verbose=0)
-        # threshold for the features from 0 to 0.1 goes to 0, 0.1 to 0.2 goes to 1, 0.2 to 0.3 goes to 2, 0.3 to 0.4 goes to 3, 0.4 to 0.5 goes to 4
-        # features = np.round(features * 10)
-        # thresehold to one
-        features[features < 0.5] = 0
-        features[features >= 0.5] = 1
-
-        features = features.flatten()
-
-        features_dict = util.Counter()
-        for i in range(len(features)):
-            features_dict[i] = features[i]
-        return features_dict
