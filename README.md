@@ -40,21 +40,36 @@ woodoku-cli -h
 ## The Different Agents and their flags
 
 ```Usage
-usage: woodoku-cli [-h] [-a {random,reflex,mtcs,minimax,alpha_beta,expectimax,q_learning,q_approx,mc_control}] [-d {GUI,Text,SummaryDisplay,Testing}] [-l]
+usage: woodoku-cli [-h] [-a {random,reflex,minimax,alpha_beta,expectimax,q_learning,q_approx}] [-d {GUI,Text,SummaryDisplay,Testing}] [-l]
 
 Play Woodoku Game
 
 options:
   -h, --help            show this help message and exit
-  -a {random,reflex,mtcs,minimax,alpha_beta,expectimax,q_learning,q_approx,mc_control}, --agent {random,reflex,mtcs,minimax,alpha_beta,expectimax,q_learning,q_approx,mc_control}
+  -a {random,reflex,minimax,alpha_beta,expectimax,q_learning,q_approx}, --agent {random,reflex,minimax,alpha_beta,expectimax,q_learning,q_approx}
                         Agent to play the game
   -d {GUI,Text,SummaryDisplay,Testing}, --display {GUI,Text,SummaryDisplay,Testing}
                         Render mode
   -l, --log             Log the game to a file
+
 ```
+As can be seen from the above, the project has different agents that can be used to play the game. The agents are:
+1. `random` - This agent plays the game randomly. using: `woodoku-cli -a random`
+2. `reflex` - This agent plays the game using a reflex agent `woodoku-cli -a reflex`
+3. `minimax` - This agent plays the game using the minimax algorithm `woodoku-cli -a minimax`
+4. `alpha_beta` - This agent plays the game using the alpha-beta pruning algorithm `woodoku-cli -a alpha_beta`
+5. `expectimax` - This agent plays the game using the expectimax algorithm `woodoku-cli -a expectimax`
+6. `q_learning` - This agent plays the game using the q-learning algorithm `woodoku-cli -a q_learning`
+7. `q_approx` - This agent plays the game using the q-learning algorithm with function approximation `woodoku-cli -a q_approx`
 
+In addition to the agents, the project has different display modes that can be used to render the game. The display modes are:
+1. `GUI` - This mode renders the game using a GUI of pygame. `woodoku-cli -d GUI`
+2. `Text` - This mode renders the game using terminal text `woodoku-cli -d Text`
+3. `SummaryDisplay` - This doesn't render the game but only display the summary of the 
+   results for `10` games. `woodoku-cli -d SummaryDisplay`
+4. `Testing` - This mode doesn't render the game but only display the results of the game. `woodoku-cli -d Testing`
 
-
+* The `-l` flag is used to log the game score using `neptune.ai`, which should be set up via `.env` file.
 
 # Docker Usage
 download docker desktop (from software center)
