@@ -19,15 +19,15 @@ git clone ...
 ```bash
 python -m venv venv
 ```
-2. Activate the virtual environment
+3. Activate the virtual environment
 ```bash
 source venv/bin/activate
 ```
-3. Install the dependencies
+4. Install the dependencies
 ```bash
 pip install .
 ```
-4. Run the project
+5. Run the project
 ```bash
 woodoku-cli -h
 ```
