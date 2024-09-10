@@ -21,11 +21,11 @@ source venv/bin/activate
 ```
 3. Install the dependencies
 ```bash
-pip install -r requirements.txt
+pip install .
 ```
 4. Run the project
 ```bash
-python src/wodukonquer.py -h
+woodoku-cli -h
 ```
 
 
