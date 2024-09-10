@@ -75,4 +75,9 @@ So to play the game using the `minimax` agent and render the game using the `GUI
 ```bash
 woodoku-cli -a minimax -d GUI
 ```
+---
+### Report
+For more information about the project, you can check the
+[report](https://drive.google.com/file/d/1iBA_bMo2xjarJwCBzh8i9g2XFQLSVJax/view?usp=sharing) for the project.
 
+Hope you enjoy playing the game! 🎉🎉🎉
