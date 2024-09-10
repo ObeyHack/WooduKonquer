@@ -1,9 +1,7 @@
 import argparse
 from woodokuMind.agents.single_agents import RandomAgent, ReflexAgent
 from woodokuMind.agents.multi_agents import MinmaxAgent, AlphaBetaAgent, ExpectimaxAgent
-from woodokuMind.agents.monte_carlo_tree_search import MCST_agent
 from woodokuMind.agents.RL_agents.qlearning import QLearningAgent, ApproximateQAgent
-from woodokuMind.agents.RL_agents.mantoCarloControl import MCControlAgent
 from woodokuMind.gameRunner import GameRunner
 
 SUMMARY_ITERS = 10
@@ -11,13 +9,11 @@ SUMMARY_ITERS = 10
 agents = {
     "random": RandomAgent,
     "reflex": ReflexAgent,
-    "mtcs": MCST_agent,
     "minimax": MinmaxAgent,
     "alpha_beta": AlphaBetaAgent,
     "expectimax": ExpectimaxAgent,
     "q_learning": QLearningAgent,
     "q_approx": ApproximateQAgent,
-    "mc_control": MCControlAgent,
 }
 
 render_modes = {
@@ -27,7 +23,7 @@ render_modes = {
     "Testing": None,
 }
 
-RL_agents = ["q_learning", "q_approx", "mc_control"]
+RL_agents = ["q_learning", "q_approx"]
 
 
 def parse_args():

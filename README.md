@@ -5,8 +5,7 @@ play the game of Woodoku
 
 https://github.com/user-attachments/assets/444c8485-bcf0-4392-9b06-90f6459615cf
 
-
-
+---
 ## How to run the project
 
 ### Environment Setup
@@ -38,6 +37,21 @@ pip install .
 woodoku-cli -h
 ```
 
+## The Different Agents and their flags
+
+```Usage
+usage: woodoku-cli [-h] [-a {random,reflex,mtcs,minimax,alpha_beta,expectimax,q_learning,q_approx,mc_control}] [-d {GUI,Text,SummaryDisplay,Testing}] [-l]
+
+Play Woodoku Game
+
+options:
+  -h, --help            show this help message and exit
+  -a {random,reflex,mtcs,minimax,alpha_beta,expectimax,q_learning,q_approx,mc_control}, --agent {random,reflex,mtcs,minimax,alpha_beta,expectimax,q_learning,q_approx,mc_control}
+                        Agent to play the game
+  -d {GUI,Text,SummaryDisplay,Testing}, --display {GUI,Text,SummaryDisplay,Testing}
+                        Render mode
+  -l, --log             Log the game to a file
+```
 
 
 
