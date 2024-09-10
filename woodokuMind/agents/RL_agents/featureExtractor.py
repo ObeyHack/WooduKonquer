@@ -40,27 +40,32 @@ class SmartExtractor(FeatureExtractor):
         """
         features = util.Counter()
         features["bias"] = 1.0
-        state2 = state.generate_successor(action)
+        state_suc = state.generate_successor(action)
+
+        block_1 = state_suc.block1.astype(np.int32)
+        block_2 = state_suc.block2.astype(np.int32)
+        block_3 = state_suc.block3.astype(np.int32)
+        board = state_suc.board.astype(np.int32)
 
         # Custom Features
         ### combo
-        features["combo"] = state2.combo
+        features["combo"] = state_suc.combo
         ### score
-        features["score"] = state2.score
+        features["score"] = state_suc.score
         ### straight
-        features["straight"] = state2.straight
+        features["straight"] = state_suc.straight
         ### stuck cells (number of single cells that are all surrounded by other cells)
         features["stuck cells"] = 0
-        for i in range(len(state2.board)):
-            for j in range(len(state2.board[i])):
-                if state2.board[i][j] == 0:
-                    if i == 0 or i == len(state2.board) - 1 or j == 0 or j == len(state2.board[i]) - 1:
+        for i in range(len(board)):
+            for j in range(len(board)):
+                if board[i][j] == 0:
+                    if i == 0 or i == len(board) - 1 or j == 0 or j == len(board[i]) - 1:
                         continue
-                    if state2.board[i - 1][j] != 0 and state2.board[i + 1][j] != 0 and state2.board[i][j - 1] != 0 and \
-                            state2.board[i][j + 1] != 0:
+                    if board[i - 1][j] != 0 and board[i + 1][j] != 0 and board[i][j - 1] != 0 and \
+                            board[i][j + 1] != 0:
                         features["stuck cells"] += 1
 
-        features["cell diff"] = np.sum(state2.board == 0) - np.sum(state.board == 0)
+        features["cell diff"] = np.sum(board == 0) - np.sum(state.board.astype(np.int32) == 0)
         features.normalize()
         return features
 
