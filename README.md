@@ -28,7 +28,7 @@ python -m venv venv
     .\venv\scripts\activate
     ```
 
-4. Install the dependencies
+4. Install the dependencies (inside the WooduKonquer directory, the same directory as pyproject.toml)
 ```bash
 pip install .
 ```
