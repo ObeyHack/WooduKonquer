@@ -63,7 +63,7 @@ def main():
     agent = agents[args.agent]()
     should_train = args.agent in RL_agents
     iters = 1 if args.render != "SummaryDisplay" else SUMMARY_ITERS
-    should_log = args.log or (args.render == "SummaryDisplay")
+    should_log = args.log
 
     GameRunner(agent, iters, args.agent, render_modes[args.render], should_log=should_log,
                 should_train=should_train).play()
